@@ -1,0 +1,140 @@
+@use 'sass:color';
+
+.app-layout {
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  transition: background-color 0.3s ease;
+}
+
+.app-main {
+  min-height: calc(100vh - 64px); // viewport height - header height
+  padding: 24px;
+  transition: background-color 0.3s ease;
+  
+  [data-theme='light'] & {
+    background: linear-gradient(135deg, 
+      rgba(255, 68, 79, 0.05) 0%, 
+      rgba(255, 255, 255, 0.312) 100%);
+  }
+  
+  [data-theme='dark'] & {
+    background-color: #1f1f1f;
+  }
+
+  @media (max-width: 1200px) {
+    padding: 20px;
+  }
+
+  @media (max-width: 992px) {
+    padding: 18px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+
+  @media (max-width: 576px) {
+    padding: 0 0 48px 0; // Reduced bottom padding for smaller navigation
+
+    .ant-row {
+      height: 100%;
+      margin: 0 !important;
+    }
+
+    // Mobile-specific content adjustments
+    .ant-card {
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+      margin-bottom: 8px;
+    }
+
+    .ant-input-search {
+      border-radius: 0;
+    }
+
+    // Strategy filters for mobile
+    .ant-radio-group {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 8px;
+      
+      .ant-radio-button-wrapper {
+        flex: 1;
+        text-align: center;
+      }
+    }
+  }
+
+  // Adjust ProcessingStack position for mobile navigation
+  @media (max-width: 768px) {
+    .processing-stack {
+      bottom: 48px; // Adjusted position for smaller navigation
+    }
+  }
+}
+
+// Component-specific styles
+.ant-layout {
+  transition: background-color 0.3s ease;
+}
+
+.ant-card,
+.ant-modal-content,
+.ant-drawer-content,
+.ant-select-dropdown,
+.ant-picker-panel-container,
+.ant-input,
+.ant-select-selector,
+.ant-btn {
+  transition: all 0.3s ease;
+}
+
+// Strategy cards
+.strategy-card {
+  height: 100%;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow-color);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 1200px) {
+  .ant-col {
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 992px) {
+  .ant-col {
+    margin-bottom: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ant-col {
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 576px) {
+  .ant-col {
+    margin-bottom: 12px;
+  }
+}
+
+.ant-col:last-child {
+  margin-bottom: 0;
+}
+
+// Ensure content containers are responsive
+.ant-card, 
+.ant-list,
+.ant-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}

@@ -1,0 +1,455 @@
+:root {
+  // Light theme (default)
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-elevated: #ffffff;
+  --text-primary: rgba(0, 0, 0, 0.85);
+  --text-secondary: rgba(0, 0, 0, 0.45);
+  --border-color: #e6e6e6;
+  --accent-color: #ff4d4f;
+  --success-color: #52c41a;
+  --warning-color: #faad14;
+  --error-color: #ff4d4f;
+  
+  // Component specific
+  --hover-bg: #f5f5f5;
+  --drawer-bg: #ffffff;
+  --sidebar-bg: #ffffff;
+  --input-bg: #ffffff;
+  --input-border: #e6e6e6;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  
+  // Navigation
+  --menu-bg: #ffffff;
+  --menu-item-hover: #f5f5f5;
+  --menu-item-active: #fff0f0;
+  --menu-item-selected: var(--accent-color);
+  
+  // Strategy cards
+  --card-bg: #ffffff;
+  --card-border: #f0f0f0;
+  --card-hover-border: var(--accent-color);
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --card-hover-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  
+  // Filters
+  --filter-bg: #ffffff;
+  --filter-border: #e6e6e6;
+  --filter-hover: #f5f5f5;
+  --filter-active: var(--accent-color);
+}
+
+[data-theme='dark'] {
+  // Base colors
+  --bg-primary: #262626;
+  --bg-secondary: #1f1f1f;
+  --bg-elevated: #303030;
+  --text-primary: rgba(255, 255, 255, 0.85);
+  --text-secondary: rgba(255, 255, 255, 0.65);
+  --border-color: #434343;
+  --accent-color: #ff4d4f;
+  --success-color: #52c41a;
+  --warning-color: #faad14;
+  --error-color: #ff4d4f;
+  
+  // Component specific
+  --hover-bg: #404040;
+  --drawer-bg: #1f1f1f;
+  --modal-bg: #1f1f1f;
+  --sidebar-bg: #262626;
+  --input-bg: #141414;
+  --input-border: #434343;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --dropdown-bg: #1f1f1f;
+  
+  // Navigation
+  --menu-bg: #262626;
+  --menu-item-hover: #404040;
+  --menu-item-active: #404040;
+  --menu-item-selected: var(--accent-color);
+  
+  // Strategy cards
+  --card-bg: #262626;
+  --card-border: #434343;
+  --card-hover-border: var(--accent-color);
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --card-hover-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  
+  // Filters
+  --filter-bg: #262626;
+  --filter-border: #434343;
+  --filter-hover: #404040;
+  --filter-active: var(--accent-color);
+  
+  // Additional styles for better visibility in dark mode
+  .ant-form {
+    background: var(--modal-bg);
+    color: var(--text-primary);
+
+    .ant-row {
+      display: flex;
+      margin: 0 0 12px;
+      flex-wrap: wrap;
+      
+      @media (max-width: 768px) {
+        margin: 0;
+      }
+    }
+
+    .ant-col {
+      flex: 1;
+      padding: 0 12px;
+
+      &:first-child {
+        padding-left: 0;
+      }
+
+      &:last-child {
+        padding-right: 0;
+      }
+
+      @media (max-width: 768px) {
+        padding: 0;
+      }
+    }
+
+    .ant-form-item {
+      width: 100%;
+      margin-bottom: 0;
+      background: var(--modal-bg);
+      padding: 0;
+    }
+  }
+
+  // Modal content
+  .ant-modal-content {
+    padding: 0;
+    overflow: hidden;
+    border-radius: 8px;
+    background: var(--modal-bg);
+    border-color: var(--border-color);
+
+    .ant-modal-header {
+      padding: 16px 24px;
+      margin: 0;
+      background: var(--modal-bg);
+      border-color: var(--border-color);
+    }
+
+    .ant-modal-body {
+      padding: 24px;
+      background: var(--modal-bg);
+    }
+
+    .ant-modal-footer {
+      margin: 0;
+      padding: 16px 24px;
+      background: var(--modal-bg);
+      border-top-color: var(--border-color);
+    }
+  }
+
+  // Form field styles
+  .ant-form-item-label > label,
+  .ant-form-item-label > label.ant-form-item-required {
+    color: var(--text-primary) !important;
+  }
+
+  // Form labels with asterisk
+  .ant-form-item-required::after {
+    color: var(--text-primary) !important;
+  }
+
+  // Form labels with asterisk before
+  .ant-form-item-required::before {
+    color: #ff4d4f !important;
+  }
+
+  // Form item label colon
+  .ant-form-item-label > label::after {
+    color: var(--text-secondary) !important;
+  }
+
+  .ant-form-item-control-input-content {
+    background: var(--modal-bg);
+  }
+
+  .ant-modal-title,
+  .ant-modal-close {
+    color: var(--text-primary);
+  }
+
+  .ant-select-dropdown,
+  .ant-picker-dropdown,
+  .ant-dropdown-menu {
+    background: var(--dropdown-bg);
+    border-color: var(--border-color);
+  }
+
+  .ant-select-item {
+    color: var(--text-primary);
+    
+    &:hover {
+      background: var(--hover-bg);
+    }
+    
+    &-selected {
+      background: var(--menu-item-active);
+      color: var(--accent-color);
+    }
+  }
+
+  .ant-menu.ant-menu-dark {
+    background: var(--menu-bg);
+    
+    .ant-menu-item:hover {
+      background: var(--menu-item-hover);
+    }
+    
+    .ant-menu-item-selected {
+      background: var(--menu-item-active);
+      color: var(--menu-item-selected);
+    }
+  }
+  
+  .strategy-card {
+    background: var(--card-bg);
+    border-color: var(--card-border);
+    box-shadow: var(--card-shadow);
+    
+    &:hover {
+      border-color: var(--card-hover-border);
+      box-shadow: var(--card-hover-shadow);
+    }
+    
+    .ant-card-head {
+      border-color: var(--card-border);
+    }
+  }
+  
+  .ant-tag {
+    border-color: var(--filter-border);
+    background: var(--filter-bg);
+    
+    &:hover {
+      background: var(--filter-hover);
+    }
+    
+    &.ant-tag-checkable-checked {
+      background: var(--filter-active);
+    }
+  }
+  
+  // Ant Design specific overrides
+  .ant-card {
+    background: var(--drawer-bg);
+    border-color: var(--border-color);
+  }
+
+  .ant-layout {
+    background: var(--bg-primary);
+  }
+
+  .ant-layout-sider {
+    background: var(--sidebar-bg);
+  }
+
+  .ant-menu.ant-menu-dark {
+    background: var(--sidebar-bg);
+  }
+
+  .ant-table {
+    background: var(--drawer-bg);
+    color: var(--text-primary);
+  }
+
+  .ant-table-thead > tr > th {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+  }
+
+  .ant-table-tbody > tr > td {
+    border-color: var(--border-color);
+  }
+
+  // Button styles
+  .ant-btn {
+    height: 40px;
+    padding: 6.4px 16px;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    &.ant-btn-primary {
+      background: var(--accent-color);
+      border-color: var(--accent-color);
+      color: #fff;
+
+      &:hover {
+        background: var(--accent-color);
+        border-color: var(--accent-color);
+        opacity: 0.8;
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    &:not(.ant-btn-primary):not(.ant-btn-link):not(.ant-btn-text) {
+      background: var(--bg-secondary);
+      border-color: var(--border-color);
+      color: var(--text-primary);
+
+      &:hover {
+        border-color: var(--accent-color);
+        color: var(--accent-color);
+      }
+    }
+  }
+
+  // Form inputs
+  .ant-input {
+    background-color: var(--input-bg) !important;
+    border-color: var(--border-color);
+    color: var(--text-primary) !important;
+
+    &:hover {
+      border-color: var(--accent-color);
+    }
+
+    &:focus {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(255, 68, 79, 0.1);
+    }
+  }
+
+  // Input number styles
+  .ant-input-number {
+    background-color: var(--input-bg) !important;
+    border-color: var(--border-color);
+    color: var(--text-primary) !important;
+
+    .ant-input-number-input {
+      background-color: var(--input-bg);
+      color: var(--text-primary);
+    }
+
+    .ant-input-number-handler-wrap {
+      background-color: var(--bg-secondary);
+      border-color: var(--border-color);
+    }
+
+    .ant-input-number-handler-up,
+    .ant-input-number-handler-down {
+      border-color: var(--border-color);
+      
+      &:hover {
+        border-color: var(--accent-color);
+        height: 50%;
+        
+        .ant-input-number-handler-up-inner,
+        .ant-input-number-handler-down-inner {
+          color: var(--accent-color);
+        }
+      }
+    }
+
+    &:hover {
+      border-color: var(--accent-color);
+    }
+
+    &:focus,
+    &-focused {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(255, 68, 79, 0.1);
+    }
+  }
+
+  // Select styles
+  .ant-select:not(.ant-select-customize-input) {
+    .ant-select-selector {
+      background-color: var(--input-bg) !important;
+      border-color: var(--border-color);
+      color: var(--text-primary) !important;
+
+      &:hover {
+        border-color: var(--accent-color);
+      }
+    }
+
+    &.ant-select-focused .ant-select-selector {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(255, 68, 79, 0.1);
+    }
+  }
+
+  .ant-select-dropdown {
+    background-color: var(--dropdown-bg) !important;
+    
+    .ant-select-item {
+      color: var(--text-primary);
+      
+      &:hover {
+        background: var(--hover-bg);
+      }
+      
+      &-selected {
+        background: var(--menu-item-active);
+        color: var(--accent-color);
+      }
+    }
+  }
+
+  // Close button
+  .ant-modal-close {
+    color: var(--text-secondary);
+    
+    &:hover {
+      color: var(--text-primary);
+    }
+  }
+
+  // Modal title
+  .ant-modal-title {
+    color: var(--text-primary);
+  }
+
+  // Form footer
+  .ant-form > .ant-form-item:last-child {
+    margin-bottom: 0;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+  }
+
+  // Drawer footer
+  .ant-drawer-footer {
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+  }
+
+  .ant-form-item-explain,
+  .ant-form-item-extra {
+    color: var(--text-secondary);
+  }
+
+  .ant-input-affix-wrapper {
+    background: var(--input-bg);
+    border-color: var(--border-color);
+    
+    &:hover,
+    &:focus {
+      border-color: var(--accent-color);
+    }
+
+    .ant-input {
+      background: var(--input-bg);
+    }
+  }
+}
