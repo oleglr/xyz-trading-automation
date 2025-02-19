@@ -6,16 +6,17 @@ class ApiService {
   private api: AxiosInstance;
 
   private constructor() {
+    // Use relative URL for proxy
     this.api = axios.create({
-      baseURL: API_CONFIG.BASE_URL,
+      baseURL: '/api/v2', // This will be prefixed to all endpoints
       timeout: API_CONFIG.TIMEOUT,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'authorize': 'your-auth-token',
-        'loginid': 'your-login-id',
-        'deriv-url': 'your-deriv-url',
-        'auth-url': 'your-auth-url',
+        'authorize': import.meta.env.VITE_Authorize,
+        'loginid': import.meta.env.VITE_Login_Id,
+        'deriv-url': import.meta.env.VITE_Deriv_Url,
+        'auth-url': import.meta.env.VITE_Auth_Url,
       },
     });
 
@@ -32,18 +33,39 @@ class ApiService {
   private setupInterceptors(): void {
     this.api.interceptors.request.use(
       (config) => {
+        // Log request for debugging
+        console.log('API Request:', {
+          url: config.url,
+          method: config.method,
+          headers: config.headers,
+          data: config.data
+        });
         return config;
       },
       (error) => {
+        console.error('Request error:', error);
         return Promise.reject(error);
       }
     );
 
     this.api.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        console.log('API Response:', {
+          url: response.config.url,
+          status: response.status,
+          data: response.data
+        });
+        return response;
+      },
       (error: AxiosError) => {
+        console.error('Response error:', {
+          url: error.config?.url,
+          status: error.response?.status,
+          data: error.response?.data
+        });
+        
         if (error.response?.status === 401) {
-          // Handle unauthorized access
+          console.error('Unauthorized access');
         }
         return Promise.reject(error);
       }
@@ -51,8 +73,17 @@ class ApiService {
   }
 
   private mergeHeaders(customHeaders?: RawAxiosRequestHeaders): RawAxiosRequestHeaders {
+    // Ensure environment variables are always included
+    const envHeaders = {
+      'authorize': import.meta.env.VITE_Authorize,
+      'loginid': import.meta.env.VITE_Login_Id,
+      'deriv-url': import.meta.env.VITE_Deriv_Url,
+      'auth-url': import.meta.env.VITE_Auth_Url,
+    };
+
     return {
       ...this.api.defaults.headers.common,
+      ...envHeaders,
       ...customHeaders,
     };
   }
@@ -91,6 +122,23 @@ class ApiService {
       headers: this.mergeHeaders(headers)
     });
     return response.data;
+  }
+
+  private validateEnvironmentVariables(): void {
+    const required = [
+      'VITE_Authorize',
+      'VITE_Login_Id',
+      'VITE_Deriv_Url',
+      'VITE_Auth_Url'
+    ];
+
+    const missing = required.filter(key => !import.meta.env[key]);
+    
+    if (missing.length > 0) {
+      throw new Error(
+        `Missing required environment variables: ${missing.join(', ')}`
+      );
+    }
   }
 }
 
