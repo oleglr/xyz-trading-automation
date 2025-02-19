@@ -21,17 +21,6 @@ type FormField = keyof RepeatTradeFormValues;
 
 const DEFAULT_NUMBER_OF_TRADES = 10;
 
-/**
- * RepeatTradeForm Component
- * 
- * This component provides the interface for configuring and initiating repeat trades.
- * It integrates with:
- * - TradeService for API communication
- * - ProcessingStack for trade progress tracking
- * - TradeErrorBoundary for error handling
- * 
- * @param {RepeatTradeFormProps} props - Component props
- */
 export function RepeatTradeForm({ onSubmit }: RepeatTradeFormProps) {
   const [form] = Form.useForm<RepeatTradeFormValues>();
   const { addProcess } = useProcessingStack();
@@ -49,11 +38,22 @@ export function RepeatTradeForm({ onSubmit }: RepeatTradeFormProps) {
       // Add to processing stack immediately to show progress
       addProcess({
         sessionId,
-        completedTrades: 0,
-        totalTrades: DEFAULT_NUMBER_OF_TRADES,
-        profit: 0,
-        tradeType: 'Repeat Trade',
-        status: TradeStatusEnum.PENDING
+        symbol: values.asset,
+        strategy: 'repeat-trade',
+        status: TradeStatusEnum.PENDING,
+        is_completed: false,
+        tradeInfo: {
+          session_id: sessionId,
+          contracts: [],
+          start_time: new Date().toISOString(),
+          end_time: '',
+          total_profit: 0,
+          win_profit: 0,
+          loss_profit: 0,
+          strategy: 'repeat-trade',
+          number_of_trade: DEFAULT_NUMBER_OF_TRADES,
+          initial: values.initial_stake
+        }
       });
 
       // Prepare the API request
@@ -77,11 +77,22 @@ export function RepeatTradeForm({ onSubmit }: RepeatTradeFormProps) {
       // Update the process with the actual session ID from the API
       addProcess({
         sessionId: response.session_id,
-        completedTrades: 0,
-        totalTrades: response.trades,
-        profit: 0,
-        tradeType: 'Repeat Trade',
-        status: TradeStatusEnum.ACTIVE
+        symbol: values.asset,
+        strategy: 'repeat-trade',
+        status: TradeStatusEnum.ACTIVE,
+        is_completed: false,
+        tradeInfo: {
+          session_id: response.session_id,
+          contracts: [],
+          start_time: new Date().toISOString(),
+          end_time: '',
+          total_profit: 0,
+          win_profit: 0,
+          loss_profit: 0,
+          strategy: 'repeat-trade',
+          number_of_trade: response.trades,
+          initial: values.initial_stake
+        }
       });
 
       message.success('Trading session started successfully');
@@ -92,15 +103,26 @@ export function RepeatTradeForm({ onSubmit }: RepeatTradeFormProps) {
       // Add error process to stack
       addProcess({
         sessionId: Math.random().toString(36).substring(7).toUpperCase(),
-        completedTrades: 0,
-        totalTrades: DEFAULT_NUMBER_OF_TRADES,
-        profit: 0,
-        tradeType: 'Repeat Trade',
+        symbol: values.asset,
+        strategy: 'repeat-trade',
         status: TradeStatusEnum.ERROR,
-        error: error instanceof Error ? error.message : 'Failed to start trading session'
+        is_completed: true,
+        error: error instanceof Error ? error.message : 'Failed to start trading session',
+        tradeInfo: {
+          session_id: '',
+          contracts: [],
+          start_time: new Date().toISOString(),
+          end_time: new Date().toISOString(),
+          total_profit: 0,
+          win_profit: 0,
+          loss_profit: 0,
+          strategy: 'repeat-trade',
+          number_of_trade: DEFAULT_NUMBER_OF_TRADES,
+          initial: values.initial_stake
+        }
       });
       
-      throw error; // Let the error boundary handle it
+      setIsRunning(false);
     } finally {
       setIsSubmitting(false);
     }

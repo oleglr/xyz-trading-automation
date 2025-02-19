@@ -1,57 +1,183 @@
-import { Card, Progress, Typography, Space } from 'antd';
-import { LoadingOutlined } from '@ant-design/icons';
+import React from 'react';
+import { Card, Progress, Typography, Space, Button, Tooltip } from 'antd';
+import { 
+  LoadingOutlined, 
+  CheckCircleOutlined, 
+  CloseCircleOutlined,
+  CloseOutlined
+} from '@ant-design/icons';
 import { useState, useEffect } from 'react';
+import { TradeStatusEnum } from '../../types/trade';
 import './styles.scss';
 
 const { Text } = Typography;
 
+const AUTO_REMOVE_DELAY = 5000; // 5 seconds for completed/error states
+
+interface TradeInfo {
+  session_id: string;
+  contracts: any[] | null;
+  start_time: string;
+  end_time: string;
+  total_profit: number;
+  win_profit: number;
+  loss_profit: number;
+  strategy: string;
+  number_of_trade?: number;
+  initial?: number;
+}
+
 export interface ProcessInfo {
   id: string;
   sessionId: string;
-  completedTrades: number;
-  totalTrades: number;
-  profit: number;
-  tradeType: string;
+  symbol: string;
+  error?: string;
+  strategy: string;
+  tradeInfo: TradeInfo;
   timestamp: number;
+  status: TradeStatusEnum;
+  is_completed: boolean;
 }
 
-function ProcessingCard({ process }: { process: ProcessInfo }) {
+interface StatusConfig {
+  icon: React.ReactNode;
+  color: string;
+  text: string;
+}
+
+const getStatusConfig = (process: ProcessInfo): StatusConfig => {
+  if (process.error) {
+    return {
+      icon: <CloseCircleOutlined />,
+      color: 'var(--error-color)',
+      text: 'Error'
+    };
+  }
+
+  if (process.is_completed) {
+    return {
+      icon: <CheckCircleOutlined />,
+      color: 'var(--success-color)',
+      text: 'Completed'
+    };
+  }
+
+  return {
+    icon: <LoadingOutlined />,
+    color: 'var(--accent-color)',
+    text: 'Active'
+  };
+};
+
+const formatDateTime = (dateStr: string) => {
+  if (!dateStr || dateStr === '0001-01-01T00:00:00Z') return '';
+  return new Date(dateStr).toLocaleTimeString();
+};
+
+interface ProcessingCardProps {
+  process: ProcessInfo;
+  onRemove: (id: string) => void;
+}
+
+function ProcessingCard({ process, onRemove }: ProcessingCardProps) {
   const [fadeOut, setFadeOut] = useState(false);
-  const progress = Math.round((process.completedTrades / process.totalTrades) * 100);
-  const profitColor = process.profit >= 0 ? 'var(--success-color)' : 'var(--error-color)';
+  const statusConfig = getStatusConfig(process);
+  const completedTrades = process.tradeInfo.contracts?.length ?? 0;
+  const totalTrades = process.tradeInfo.number_of_trade ?? 0;
+  const progress = totalTrades > 0 ? Math.round((completedTrades / totalTrades) * 100) : 0;
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setFadeOut(true);
-    }, 6700); // Start fade out before removal
+    let fadeTimer: NodeJS.Timeout;
+    let removeTimer: NodeJS.Timeout;
 
-    return () => clearTimeout(timer);
-  }, []);
+    if (process.is_completed || process.error) {
+      fadeTimer = setTimeout(() => {
+        setFadeOut(true);
+      }, AUTO_REMOVE_DELAY - 300);
+
+      removeTimer = setTimeout(() => {
+        onRemove(process.id);
+      }, AUTO_REMOVE_DELAY);
+    }
+
+    return () => {
+      if (fadeTimer) clearTimeout(fadeTimer);
+      if (removeTimer) clearTimeout(removeTimer);
+    };
+  }, [process.is_completed, process.error, process.id, onRemove]);
+
+  const handleClose = () => {
+    setFadeOut(true);
+    setTimeout(() => onRemove(process.id), 300);
+  };
 
   return (
-    <Card className={`processing-card ${fadeOut ? 'fade-out' : ''}`}>
+    <Card 
+      className={`processing-card ${fadeOut ? 'fade-out' : ''}`}
+      style={{ borderLeftColor: statusConfig.color }}
+      extra={
+        <Button
+          type="text"
+          icon={<CloseOutlined />}
+          onClick={handleClose}
+          size="small"
+        />
+      }
+    >
       <Space direction="vertical" size="small" style={{ width: '100%' }}>
         <div className="processing-card-header">
-          <Text className="session-id">Session: {process.sessionId}</Text>
-          <LoadingOutlined className="processing-icon" />
+          <Space>
+            <span className="status-icon" style={{ color: statusConfig.color }}>
+              {statusConfig.icon}
+            </span>
+            <div className="session-info">
+              {/* <Text className="session-id">
+                Session: {process.sessionId || 'Initializing...'}
+              </Text> */}
+              <Text className="strategy-name">
+                {process.strategy || 'Unknown Strategy'}
+              </Text>
+            </div>
+          </Space>
+          <Text className="trade-symbol">{process.symbol}</Text>
         </div>
         
         <div className="processing-card-content">
           <div className="trade-info">
-            <Text>Trades: {process.completedTrades}/{process.totalTrades}</Text>
-            <Text style={{ color: profitColor }}>
-              {process.profit >= 0 ? '+' : ''}{process.profit.toFixed(2)} USD
-            </Text>
+            <div className="trade-counts">
+              <Text>Trades: {completedTrades}/{totalTrades}</Text>
+              {process.tradeInfo.start_time && (
+                <Text className="trade-time">
+                  {formatDateTime(process.tradeInfo.start_time)} - {formatDateTime(process.tradeInfo.end_time)}
+                </Text>
+              )}
+            </div>
+            <div className="profit-info">
+              <Text className="total-profit" style={{ 
+                color: process.tradeInfo.total_profit >= 0 ? 'var(--success-color)' : 'var(--error-color)'
+              }}>
+                {process.tradeInfo.total_profit >= 0 ? '+' : ''}{process.tradeInfo.total_profit.toFixed(2)} USD
+              </Text>
+              <Text className="profit-details">
+                Win: {process.tradeInfo.win_profit.toFixed(2)} | Loss: {process.tradeInfo.loss_profit.toFixed(2)}
+              </Text>
+            </div>
           </div>
           
-          <Text className="trade-type">{process.tradeType}</Text>
-          
-          <Progress 
-            percent={progress}
-            status="active"
-            strokeColor="var(--accent-color)"
-            trailColor="var(--slider-rail-color)"
-          />
+          {process.error ? (
+            <Text className="error-message">
+              {process.error}
+            </Text>
+          ) : (
+            <Progress 
+              percent={progress}
+              status={process.error ? 'exception' :
+                     process.is_completed ? 'success' :
+                     'active'}
+              strokeColor={statusConfig.color}
+              trailColor="var(--slider-rail-color)"
+            />
+          )}
         </div>
       </Space>
     </Card>
@@ -60,15 +186,24 @@ function ProcessingCard({ process }: { process: ProcessInfo }) {
 
 interface ProcessingStackProps {
   processes: ProcessInfo[];
+  onRemoveProcess?: (id: string) => void;
 }
 
-export default function ProcessingStack({ processes }: ProcessingStackProps) {
+export default function ProcessingStack({ processes, onRemoveProcess }: ProcessingStackProps) {
   if (processes.length === 0) return null;
+
+  const handleRemove = (id: string) => {
+    onRemoveProcess?.(id);
+  };
 
   return (
     <div className="processing-stack">
       {processes.map(process => (
-        <ProcessingCard key={process.id} process={process} />
+        <ProcessingCard 
+          key={process.id} 
+          process={process}
+          onRemove={handleRemove}
+        />
       ))}
     </div>
   );
