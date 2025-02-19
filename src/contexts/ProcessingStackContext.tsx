@@ -22,12 +22,37 @@ export function ProcessingStackProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addProcess = (process: Omit<ProcessInfo, 'id' | 'timestamp'>) => {
+    const id = Math.random().toString(36).substr(2, 9);
+    const timestamp = Date.now();
+    
     const newProcess: ProcessInfo = {
       ...process,
-      id: Math.random().toString(36).substr(2, 9),
-      timestamp: Date.now()
+      id,
+      timestamp
     };
     setProcesses(prev => [...prev, newProcess]);
+
+    // Simulate progress
+    let completedTrades = 0;
+    let profit = 0;
+    const interval = setInterval(() => {
+      if (completedTrades < process.totalTrades) {
+        completedTrades++;
+        profit += Math.random() * 2 - 1; // Random profit between -1 and 1
+        
+        setProcesses(prev => 
+          prev.map(p => 
+            p.id === id 
+              ? { ...p, completedTrades, profit }
+              : p
+          )
+        );
+      } else {
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    // Process will be auto-removed by the cleanup effect after 7 seconds
   };
 
   return (

@@ -1,6 +1,7 @@
 import { Form, InputNumber, Button, Input } from 'antd';
 import { InfoCircleOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { useState } from 'react';
+import { useProcessingStack } from '../../contexts/ProcessingStackContext';
 import './styles.scss';
 
 interface RepeatTradeFormValues {
@@ -15,19 +16,30 @@ interface RepeatTradeFormValues {
 
 interface RepeatTradeFormProps {
   onSubmit: (values: RepeatTradeFormValues) => void;
-  onBack: () => void;
 }
 
 type FormField = keyof RepeatTradeFormValues;
 
-export function RepeatTradeForm({ onSubmit, onBack }: RepeatTradeFormProps) {
+export function RepeatTradeForm({ onSubmit }: RepeatTradeFormProps) {
   const [form] = Form.useForm<RepeatTradeFormValues>();
-  const [loading, setLoading] = useState(false);
+  const { addProcess } = useProcessingStack();
+  const [isRunning, setIsRunning] = useState(false);
 
   const handleSubmit = (values: RepeatTradeFormValues) => {
-    setLoading(true);
+    setIsRunning(true);
+    
+    addProcess({
+      sessionId: Math.random().toString(36).substring(7).toUpperCase(),
+      completedTrades: 0,
+      totalTrades: 10,
+      profit: 0,
+      tradeType: 'Repeat Trade'
+    });
+
     onSubmit(values);
-    setLoading(false);
+
+    // Enable the Run button after all trades complete
+    setTimeout(() => setIsRunning(false), 11000);
   };
 
   const handleIncrement = (field: FormField) => {
@@ -181,7 +193,7 @@ export function RepeatTradeForm({ onSubmit, onBack }: RepeatTradeFormProps) {
         <Button 
           className="run-button"
           onClick={form.submit}
-          loading={loading}
+          disabled={isRunning}
         >
           Run
         </Button>

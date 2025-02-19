@@ -145,7 +145,7 @@
   border-top: 1px solid var(--border-color);
   display: flex;
   gap: 12px;
-  z-index: 10;
+  z-index: 1001; // Higher than ProcessingStack to ensure buttons are clickable
 
   .back-button {
     color: var(--accent-color);
