@@ -15,13 +15,11 @@ class CustomEventSource {
   ) {}
 
   async connect(): Promise<void> {
-    // Don't create new connection if already connected
     if (this.connected) {
-      console.log('Already connected, skipping new connection');
+      console.log('SSE Service: Already connected');
       return;
     }
 
-    // Reset state
     if (this.abortController) {
       if (!this.abortController.signal.aborted) {
         this.abortController.abort();
@@ -31,11 +29,10 @@ class CustomEventSource {
     this.connected = false;
     this.buffer = '';
     
-    // Create new controller
     this.abortController = new AbortController();
 
     try {
-      console.log('Initiating SSE connection to:', this.url);
+      console.log('SSE Service: Connecting to:', this.url);
       const response = await fetch(this.url, {
         method: 'GET',
         headers: {
@@ -53,73 +50,87 @@ class CustomEventSource {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      this.connected = true;
-      console.log('SSE Connection established:', {
-        status: response.status,
-        statusText: response.statusText
-      });
-
-      // Process the stream
-      const reader = response.body?.getReader();
-      if (!reader) {
-        throw new Error('No reader available');
+      if (!response.body) {
+        throw new Error('Response has no body');
       }
+
+      const reader = response.body.getReader();
       this.reader = reader;
 
       try {
         while (true) {
           if (!this.reader) {
-            console.log('Reader was closed');
-            break;
-          }
-          const { value, done } = await this.reader.read();
-          
-          if (done) {
-            console.log('Stream complete');
+            console.log('SSE Service: Reader was closed');
             break;
           }
 
-          this.buffer += this.decoder.decode(value, { stream: true });
+          const { value, done } = await this.reader.read();
+          
+          if (done) {
+            console.log('SSE Service: Stream complete');
+            break;
+          }
+
+          const decodedText = this.decoder.decode(value, { stream: true });
+          this.buffer += decodedText;
           const lines = this.buffer.split('\n');
-          this.buffer = lines.pop() || ''; // Keep last incomplete line in buffer
+          this.buffer = lines.pop() || '';
 
           for (const line of lines) {
             if (line.trim() === '') continue;
             
             if (line.startsWith('data: ')) {
-              const data = line.slice(6);
-              // Handle heartbeat separately
-              if (data.trim() === 'heartbeat') {
-                console.debug('Received heartbeat');
+              const data = line.slice(6).trim();
+              console.log('SSE Service: Processing data:', data);
+
+              if (!this.messageHandler) {
+                console.warn('SSE Service: No message handler registered');
                 continue;
               }
-              
-              if (this.messageHandler) {
+
+              if (data.includes('heartbeat')) {
+                console.log('SSE Service: Heartbeat received');
+                this.messageHandler(new MessageEvent('message', { 
+                  data: JSON.stringify({ type: 'heartbeat' })
+                }));
+                continue;
+              }
+
+              try {
+                // Validate JSON but pass original data
+                JSON.parse(data);
+                console.log('SSE Service: Emitting message:', data);
                 this.messageHandler(new MessageEvent('message', { data }));
+              } catch (parseError) {
+                console.warn('SSE Service: Invalid JSON:', data, parseError);
               }
             }
           }
         }
-      } catch (error) {
-        if (error instanceof Error && error.name === 'AbortError') {
-          console.log('Stream reading aborted');
+      } catch (streamError) {
+        if (streamError instanceof Error && streamError.name === 'AbortError') {
+          console.log('SSE Service: Stream reading aborted');
           return;
         }
-        throw error;
+        throw streamError;
       }
 
-    } catch (error) {
+      this.connected = true;
+      console.log('SSE Service: Connection established');
+
+    } catch (connectionError) {
       this.connected = false;
-      if (error instanceof Error && error.name === 'AbortError') {
-        console.log('SSE connection aborted');
+      if (connectionError instanceof Error && connectionError.name === 'AbortError') {
+        console.log('SSE Service: Connection aborted');
         return;
       }
-      console.error('SSE Connection Error:', error);
-      throw error;
+      console.error('SSE Service: Connection error:', connectionError);
+      throw connectionError;
     }
   }
 
   set onmessage(handler: (event: MessageEvent) => void) {
+    console.log('SSE Service: Setting message handler');
     this.messageHandler = handler;
   }
 
@@ -132,10 +143,9 @@ class CustomEventSource {
       try {
         await this.reader.cancel();
       } catch (error) {
-        console.warn('Error canceling reader:', error);
-      } finally {
-        this.reader = null;
+        console.warn('SSE Service: Error canceling reader:', error);
       }
+      this.reader = null;
     }
 
     if (this.abortController) {
@@ -144,10 +154,9 @@ class CustomEventSource {
           this.abortController.abort();
         }
       } catch (error) {
-        console.warn('Error aborting SSE connection:', error);
-      } finally {
-        this.abortController = null;
+        console.warn('SSE Service: Error aborting connection:', error);
       }
+      this.abortController = null;
     }
 
     this.buffer = '';
@@ -179,24 +188,25 @@ class SSEServiceImpl implements SSEService {
   }
 
   connect(options: SSEOptions): number {
-    // If already connecting or connected with same options, just add handlers
-    if (this.isConnecting || (
-      this.eventSource && 
-      this.lastOptions && 
-      this.lastOptions.url === options.url && 
-      JSON.stringify(this.lastOptions.headers) === JSON.stringify(options.headers)
-    )) {
+    if (this.isConnected() && this.lastOptions && 
+        this.lastOptions.url === options.url && 
+        JSON.stringify(this.lastOptions.headers) === JSON.stringify(options.headers)) {
+      console.log('SSE Service: Already connected');
       if (options.onMessage) {
         this.messageHandlers.add(options.onMessage);
       }
       return this.messageHandlers.size;
     }
 
-    // If we have a different connection, close it
-    if (this.eventSource) {
-      this.disconnect();
+    if (this.isConnecting) {
+      console.log('SSE Service: Connection in progress');
+      if (options.onMessage) {
+        this.messageHandlers.add(options.onMessage);
+      }
+      return this.messageHandlers.size;
     }
 
+    console.log('SSE Service: Starting new connection');
     this.isConnecting = true;
     this.lastOptions = options;
 
@@ -208,21 +218,31 @@ class SSEServiceImpl implements SSEService {
       );
 
       if (options.onMessage) {
+        console.log('SSE Service: Adding message handler');
         this.messageHandlers.add(options.onMessage);
       }
 
       this.eventSource.onmessage = (event) => {
+        console.log('SSE Service: Broadcasting message:', event.data);
         this.messageHandlers.forEach(handler => handler(event));
       };
 
-      this.eventSource.connect().finally(() => {
-        this.isConnecting = false;
-      });
+      this.eventSource.connect()
+        .then(() => {
+          console.log('SSE Service: Connection complete');
+          this.isConnecting = false;
+        })
+        .catch(error => {
+          console.error('SSE Service: Connection failed:', error);
+          this.isConnecting = false;
+          this.eventSource = null;
+          this.messageHandlers.clear();
+        });
 
       return this.messageHandlers.size;
     } catch (error) {
       this.isConnecting = false;
-      console.error('Failed to create SSE connection:', error);
+      console.error('SSE Service: Failed to create connection:', error);
       return 0;
     }
   }
@@ -239,7 +259,7 @@ class SSEServiceImpl implements SSEService {
   }
 
   isConnected(): boolean {
-    return this.eventSource !== null && this.eventSource.readyState === CustomEventSource.OPEN;
+    return !this.isConnecting && this.eventSource !== null && this.eventSource.readyState === CustomEventSource.OPEN;
   }
 }
 
