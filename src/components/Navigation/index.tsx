@@ -2,8 +2,8 @@ import { Menu } from 'antd';
 import { 
   AppstoreOutlined, 
   HistoryOutlined,
-  SaveOutlined,
-  UserOutlined 
+  SnippetsOutlined,
+  SettingOutlined 
 } from '@ant-design/icons';
 import { useNavigation } from '../../contexts/NavigationContext';
 import type { NavigationTab } from '../../contexts/NavigationContext';
@@ -21,14 +21,14 @@ const menuItems = [
     label: 'Trade Logs',
   },
   {
-    key: 'save-strategies',
-    icon: <SaveOutlined />,
-    label: 'Save Strategies',
+    key: 'templates',
+    icon: <SnippetsOutlined />,
+    label: 'Templates',
   },
   {
-    key: 'profile',
-    icon: <UserOutlined />,
-    label: 'Profile',
+    key: 'settings',
+    icon: <SettingOutlined />,
+    label: 'Settings',
   }
 ];
 

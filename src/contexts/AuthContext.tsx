@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { AuthorizeResponse } from '../types/websocket';
+import { AuthorizeResponse } from '../types/auth';
 
 interface AuthContextType {
   authParams: Record<string, string> | null;

@@ -1,33 +1,29 @@
 .strategy-updates {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  z-index: 1000;
-  background: var(--background-color);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  min-width: 200px;
-  transition: opacity 0.3s ease;
-
-  @media (max-width: 768px) {
-    display: none;
+  h3 {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
   }
 
   .connection-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px;
+    padding: 12px;
     border-radius: 4px;
-    background-color: var(--background-color);
+    background-color: var(--bg-secondary);
     font-size: 14px;
     transition: all 0.3s ease;
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
     .status-text {
       position: relative;
       padding-left: 16px;
+      color: var(--text-primary);
+      font-weight: 500;
       
       &::before {
         content: '';
@@ -47,11 +43,16 @@
       }
     }
 
+    .connected-time {
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
     &.error {
       border: 1px solid #ff444f;
       
       .error-message {
-        margin-left: 8px;
+        margin-top: 8px;
         color: #ff444f;
         font-size: 12px;
       }

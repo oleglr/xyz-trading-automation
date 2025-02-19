@@ -1,17 +1,16 @@
-import { useEffect } from 'react';
-import { Layout, Row, Col } from 'antd';
-import { oauthService } from './services/oauth/oauthService';
-import { useWebSocket } from './hooks/useWebSocket';
-import { useAuth } from './contexts/AuthContext';
-import { useNavigation } from './contexts/NavigationContext';
-import { AuthorizeResponse } from './types/websocket';
-import { StrategyList } from './components/StrategyList';
-import { Header } from './components/Header';
-import { Navigation } from './components/Navigation';
-import { StrategyUpdates } from './components/StrategyUpdates';
-import { RepeatTradeForm } from './components/RepeatTradeForm';
+import { useEffect } from "react";
+import { Layout, Row, Col } from "antd";
+import { oauthService } from "./services/oauth/oauthService";
+import { useWebSocket } from "./hooks/useWebSocket";
+import { useAuth } from "./contexts/AuthContext";
+import { useNavigation } from "./contexts/NavigationContext";
+import { AuthorizeResponse } from "./types/websocket";
+import { StrategyList } from "./components/StrategyList";
+import { Header } from "./components/Header";
+import { Navigation } from "./components/Navigation";
+import { Settings } from "./components/Settings";
 
-import './styles/App.scss';
+import "./styles/App.scss";
 
 const { Content } = Layout;
 
@@ -20,19 +19,14 @@ function MainContent() {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'strategies':
-        return (
-          <>
-            <StrategyUpdates />
-            <StrategyList />
-          </>
-        );
-      case 'trade-logs':
+      case "strategies":
+        return <StrategyList />;
+      case "trade-logs":
         return <div>Trade Logs (Coming Soon)</div>;
-      case 'save-strategies':
-        return <div>Save Strategies (Coming Soon)</div>;
-      case 'profile':
-        return <div>Profile (Coming Soon)</div>;
+      case "templates":
+        return <div>Templates (Coming Soon)</div>;
+      case "settings":
+        return <Settings />;
       default:
         return <StrategyList />;
     }
@@ -51,23 +45,19 @@ function MainContent() {
 }
 
 function App() {
-  const { 
-    authParams, 
-    setAuthParams,
-    authorizeResponse,
-    setAuthorizeResponse 
-  } = useAuth();
+  const { authParams, setAuthParams, authorizeResponse, setAuthorizeResponse } =
+    useAuth();
 
   const { send, isConnected, connect } = useWebSocket<AuthorizeResponse>({
     onMessage: (response) => {
-      if (response.msg_type === 'authorize' && response.authorize) {
+      if (response.msg_type === "authorize" && response.authorize) {
         setAuthorizeResponse({
-          msg_type: 'authorize',
-          authorize: response.authorize
+          msg_type: "authorize",
+          authorize: response.authorize,
         });
       }
     },
-    autoConnect: false
+    autoConnect: false,
   });
 
   useEffect(() => {
@@ -104,7 +94,7 @@ function App() {
 
   return (
     <Layout className="app-layout">
-      <Header 
+      <Header
         isLoggedIn={isLoggedIn}
         onLogin={handleLogin}
         onLogout={handleLogout}
@@ -116,4 +106,4 @@ function App() {
   );
 }
 
-export default App
+export default App;

@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { ConfigProvider, theme } from 'antd';
 import { ThemeProvider, useTheme } from '../contexts/ThemeContext';
 import { AuthProvider } from '../contexts/AuthContext';
+import { SSEProvider } from '../contexts/SSEContext';
 import { NavigationProvider } from '../contexts/NavigationContext';
 import { ProcessingStackProvider } from '../contexts/ProcessingStackContext';
 
@@ -30,7 +31,8 @@ function ThemeConfigProvider({ children }: { children: ReactNode }) {
 export function AppProviders({ children }: AppProvidersProps) {
   return (
     <AuthProvider>
-      <ThemeProvider>
+      <SSEProvider>
+        <ThemeProvider>
         <ThemeConfigProvider>
           <NavigationProvider>
             <ProcessingStackProvider>
@@ -38,7 +40,8 @@ export function AppProviders({ children }: AppProvidersProps) {
             </ProcessingStackProvider>
           </NavigationProvider>
         </ThemeConfigProvider>
-      </ThemeProvider>
+        </ThemeProvider>
+      </SSEProvider>
     </AuthProvider>
   );
 }

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 
-export type NavigationTab = 'strategies' | 'trade-logs' | 'save-strategies' | 'profile';
+export type NavigationTab = 'strategies' | 'trade-logs' | 'templates' | 'settings';
 
 interface NavigationContextType {
   activeTab: NavigationTab;
