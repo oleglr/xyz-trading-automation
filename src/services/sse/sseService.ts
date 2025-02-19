@@ -32,7 +32,6 @@ class CustomEventSource {
     this.abortController = new AbortController();
 
     try {
-      console.log('SSE Service: Connecting to:', this.url);
       const response = await fetch(this.url, {
         method: 'GET',
         headers: {
@@ -81,7 +80,6 @@ class CustomEventSource {
             
             if (line.startsWith('data: ')) {
               const data = line.slice(6).trim();
-              console.log('SSE Service: Processing data:', data);
 
               if (!this.messageHandler) {
                 console.warn('SSE Service: No message handler registered');
@@ -89,7 +87,6 @@ class CustomEventSource {
               }
 
               if (data.includes('heartbeat')) {
-                console.log('SSE Service: Heartbeat received');
                 this.messageHandler(new MessageEvent('message', { 
                   data: JSON.stringify({ type: 'heartbeat' })
                 }));
@@ -99,7 +96,6 @@ class CustomEventSource {
               try {
                 // Validate JSON but pass original data
                 JSON.parse(data);
-                console.log('SSE Service: Emitting message:', data);
                 this.messageHandler(new MessageEvent('message', { data }));
               } catch (parseError) {
                 console.warn('SSE Service: Invalid JSON:', data, parseError);
@@ -130,7 +126,6 @@ class CustomEventSource {
   }
 
   set onmessage(handler: (event: MessageEvent) => void) {
-    console.log('SSE Service: Setting message handler');
     this.messageHandler = handler;
   }
 
@@ -191,7 +186,6 @@ class SSEServiceImpl implements SSEService {
     if (this.isConnected() && this.lastOptions && 
         this.lastOptions.url === options.url && 
         JSON.stringify(this.lastOptions.headers) === JSON.stringify(options.headers)) {
-      console.log('SSE Service: Already connected');
       if (options.onMessage) {
         this.messageHandlers.add(options.onMessage);
       }
@@ -199,14 +193,11 @@ class SSEServiceImpl implements SSEService {
     }
 
     if (this.isConnecting) {
-      console.log('SSE Service: Connection in progress');
       if (options.onMessage) {
         this.messageHandlers.add(options.onMessage);
       }
       return this.messageHandlers.size;
     }
-
-    console.log('SSE Service: Starting new connection');
     this.isConnecting = true;
     this.lastOptions = options;
 
@@ -218,18 +209,15 @@ class SSEServiceImpl implements SSEService {
       );
 
       if (options.onMessage) {
-        console.log('SSE Service: Adding message handler');
         this.messageHandlers.add(options.onMessage);
       }
 
       this.eventSource.onmessage = (event) => {
-        console.log('SSE Service: Broadcasting message:', event.data);
         this.messageHandlers.forEach(handler => handler(event));
       };
 
       this.eventSource.connect()
         .then(() => {
-          console.log('SSE Service: Connection complete');
           this.isConnecting = false;
         })
         .catch(error => {
