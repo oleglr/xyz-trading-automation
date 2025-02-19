@@ -1,0 +1,113 @@
+.processing-stack {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  pointer-events: none;
+
+  @media (max-width: 768px) {
+    left: 0;
+    right: 0;
+    bottom: 48px; // Position above smaller navigation
+    padding: 8px 16px;
+    max-height: 35vh; // Slightly increased height due to smaller navigation
+  }
+
+  .processing-card {
+    pointer-events: auto;
+  }
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.processing-card {
+  width: 300px;
+  background: var(--bg-primary, #fff);
+  border: 1px solid var(--border-color, #f0f0f0);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  pointer-events: auto;
+  animation: slideIn 0.3s ease-out;
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 0.3s ease-in, transform 0.3s ease-in;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 8px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &.fade-out {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+
+  .ant-card-body {
+    padding: 12px !important;
+  }
+
+  .processing-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+
+    .session-id {
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    .processing-icon {
+      color: var(--accent-color);
+      font-size: 16px;
+    }
+  }
+
+  .processing-card-content {
+    .trade-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .trade-type {
+      display: block;
+      color: var(--text-secondary);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .ant-progress {
+      margin-bottom: 0;
+      line-height: 1;
+
+      .ant-progress-bg {
+        height: 4px !important;
+      }
+    }
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

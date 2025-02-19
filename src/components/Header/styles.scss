@@ -1,0 +1,78 @@
+@use "sass:color";
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: var(--bg-primary);
+  box-shadow: 0 2px 8px var(--shadow-color);
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  &__logo-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  @media (max-width: 576px) {
+    padding: 0 16px;
+    height: 56px;
+
+    &__logo-section {
+      gap: 8px;
+    }
+
+    &__logo {
+      width: 28px;
+      height: 28px;
+    }
+
+    &__title {
+      font-size: 18px;
+    }
+
+    &__auth-button {
+      padding: 4px 12px;
+      height: 32px;
+      font-size: 14px;
+    }
+  }
+
+  &__logo {
+    width: 32px;
+    height: 32px;
+  }
+
+  &__title {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  &__theme-button {
+    &.ant-btn {
+      color: var(--text-secondary);
+      
+      &:hover {
+        color: var(--accent-color);
+        background: var(--hover-bg);
+      }
+    }
+  }
+
+  &__auth-button {
+    &.ant-btn-primary {
+      background-color: var(--accent-color);
+      border-color: var(--accent-color);
+
+      &:hover {
+        filter: brightness(0.9);
+        transition: filter 0.3s ease;
+      }
+    }
+  }
+}

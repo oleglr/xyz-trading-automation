@@ -1,0 +1,130 @@
+.app-navigation {
+  background: var(--bg-primary);
+  border-radius: 8px;
+  box-shadow: var(--card-shadow);
+  width: 100%;
+  max-width: 250px;
+  flex-shrink: 0;
+  height: fit-content;
+  border: 1px solid var(--border-color);
+
+  &__menu {
+    background: transparent !important;
+    border-right: none !important;
+    width: 100%;
+
+    .ant-menu-item {
+      margin: 4px 8px !important;
+      padding: 0 16px !important;
+      border-radius: 4px !important;
+      height: 40px !important;
+      line-height: 40px !important;
+      color: var(--text-primary);
+      transition: all 0.3s ease !important;
+
+
+      &:hover {
+        color: var(--accent-color) !important;
+        background: var(--hover-bg) !important;
+      }
+
+      &-selected {
+        background-color: transparent !important;
+        color: var(--accent-color) !important;
+
+        &:hover {
+          color: var(--accent-color) !important;
+          background-color: transparent !important;
+        }
+
+        .anticon {
+          color: var(--accent-color) !important;
+        }
+      }
+
+      &-disabled {
+        opacity: 0.5 !important;
+        cursor: not-allowed !important;
+
+        &:hover {
+          color: var(--text-secondary) !important;
+          background: transparent !important;
+        }
+
+        .anticon {
+          opacity: 0.5 !important;
+        }
+      }
+    }
+
+    .anticon {
+      font-size: 18px !important;
+      margin-right: 12px !important;
+      color: var(--text-primary);
+    }
+  }
+
+  @media (max-width: 768px) {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 100%;
+    margin: 0;
+    border-radius: 0;
+    border: none;
+    border-top: 1px solid var(--border-color);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+
+    &__menu {
+      display: flex !important;
+      justify-content: space-around;
+      padding: 2px 0;
+      
+      .ant-menu-item {
+        flex: 1;
+        margin: 0 !important;
+        padding: 8px 0 !important;
+        border-radius: 0 !important;
+        height: 55px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 4px !important;
+        font-size: 10px !important;
+
+        .anticon {
+          font-size: 20px !important;
+          width: 20px !important;
+          height: 20px !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          margin: 0 !important;
+        }
+
+        span {
+          display: block !important;
+          height: 12px !important;
+          line-height: 12px !important;
+        }
+      }
+    }
+  }
+}
+
+// Dark mode specific overrides
+[data-theme='dark'] {
+  .app-navigation {
+    &__menu {
+      .ant-menu-item {
+        &:hover {
+          background: transparent !important;
+          color: var(--accent-color) !important;
+        }
+      }
+    }
+  }
+}
