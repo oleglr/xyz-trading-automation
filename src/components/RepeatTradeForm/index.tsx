@@ -1,4 +1,3 @@
-import React from 'react';
 import { Form, InputNumber, Button, Input, message } from 'antd';
 import { InfoCircleOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { useState } from 'react';
