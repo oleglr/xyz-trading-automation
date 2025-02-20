@@ -16,12 +16,5 @@
         { "key": "Access-Control-Expose-Headers", "value": "authorize, loginid, deriv-url, auth-url" }
       ]
     }
-  ],
-  "routes": [
-    {
-      "src": "/api/v2/(.*)",
-      "methods": ["OPTIONS"],
-      "dest": "/api/cors"
-    }
   ]
 }
