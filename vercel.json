@@ -1,0 +1,18 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/v2/:path*",
+      "destination": "https://pr92.mobile-bot.deriv.dev/api/v2/:path*"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/v2/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization, loginid, deriv-url, auth-url, authorize" }
+      ]
+    }
+  ]
+}
