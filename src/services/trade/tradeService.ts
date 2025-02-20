@@ -1,10 +1,9 @@
 import { apiService } from '../api/apiService';
 import { API_CONFIG, API_ENDPOINTS } from '../../config/api.config';
-import type { 
-  RepeatTradeRequest, 
-  RepeatTradeResponse, 
-  TradeStatus,
-  TradeError
+import type {
+  RepeatTradeRequest,
+  RepeatTradeResponse,
+  TradeStatus
 } from '../../types/trade';
 
 class TradeService {
@@ -119,26 +118,6 @@ class TradeService {
     );
   }
 
-  /**
-   * Validates the required environment variables are present
-   * @throws Error if any required variables are missing
-   */
-  private validateEnvironmentVariables(): void {
-    const required = [
-      'VITE_Authorize',
-      'VITE_Login_Id',
-      'VITE_Deriv_Url',
-      'VITE_Auth_Url'
-    ];
-
-    const missing = required.filter(key => !import.meta.env[key]);
-    
-    if (missing.length > 0) {
-      throw new Error(
-        `Missing required environment variables: ${missing.join(', ')}`
-      );
-    }
-  }
 }
 
 // Export singleton instance

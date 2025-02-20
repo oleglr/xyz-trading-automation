@@ -124,22 +124,6 @@ class ApiService {
     return response.data;
   }
 
-  private validateEnvironmentVariables(): void {
-    const required = [
-      'VITE_Authorize',
-      'VITE_Login_Id',
-      'VITE_Deriv_Url',
-      'VITE_Auth_Url'
-    ];
-
-    const missing = required.filter(key => !import.meta.env[key]);
-    
-    if (missing.length > 0) {
-      throw new Error(
-        `Missing required environment variables: ${missing.join(', ')}`
-      );
-    }
-  }
 }
 
 export const apiService = ApiService.getInstance();
