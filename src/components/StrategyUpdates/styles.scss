@@ -34,7 +34,7 @@
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background-color: #ff444f;
+        background-color: #00d0ff;
         transition: background-color 0.3s ease;
       }
       
@@ -49,11 +49,11 @@
     }
 
     &.error {
-      border: 1px solid #ff444f;
+      border: 1px solid #00d0ff;
       
       .error-message {
         margin-top: 8px;
-        color: #ff444f;
+        color: #00d0ff;
         font-size: 12px;
       }
     }

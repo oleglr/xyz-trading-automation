@@ -7,9 +7,11 @@ export const API_CONFIG = {
 
 export const API_ENDPOINTS = {
   // Trading endpoints
-  REPEAT_TRADE: '/repeat-trade',
-  IS_TRADING: '/is-trading',
-  STOP_TRADING: '/stop-trading',
+  REPEAT_TRADE: 'repeat-trade',
+  IS_TRADING: 'is-trading',
+  STOP_TRADING: 'stop-trading',
+  Threshold_Trade: 'threshold-trade',
+  Martingale_Trade: 'martingale-trade',
   // WebSocket endpoint
   WS: '/ws',
 }

@@ -16,7 +16,7 @@ function ThemeConfigProvider({ children }: { children: ReactNode }) {
   const antdTheme = {
     algorithm: currentTheme === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm,
     token: {
-      colorPrimary: '#ff444f',
+      colorPrimary: '#00d0ff',
       borderRadius: 4,
     },
   };

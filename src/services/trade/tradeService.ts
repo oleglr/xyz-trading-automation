@@ -1,9 +1,8 @@
 import { apiService } from '../api/apiService';
 import { API_CONFIG, API_ENDPOINTS } from '../../config/api.config';
-import type {
-  RepeatTradeRequest,
-  RepeatTradeResponse,
-  TradeStatus
+import {
+  TradeStatus,
+  TradeStrategy
 } from '../../types/trade';
 
 class TradeService {
@@ -20,12 +19,16 @@ class TradeService {
   }
 
   /**
-   * Starts a repeat trade session
+   * Executes a trading session with the specified strategy
    * @param request The trade request parameters
+   * @param strategy The trading strategy to use
    * @returns Promise with the trade response
    * @throws TradeError if the request fails
    */
-  public async startRepeatTrade(request: RepeatTradeRequest): Promise<RepeatTradeResponse> {
+  public async executeTrade<TRequest extends object, TResponse>(
+    request: TRequest,
+    strategy: TradeStrategy
+  ): Promise<TResponse> {
     const headers = {
       'authorize': import.meta.env.VITE_Authorize,
       'loginid': import.meta.env.VITE_Login_Id,
@@ -33,13 +36,34 @@ class TradeService {
       'auth-url': import.meta.env.VITE_Auth_Url,
     };
 
+    // Get the appropriate endpoint based on the strategy
+    const endpoint = this.getStrategyEndpoint(strategy);
+
     return await this.retryOperation(() => 
-      apiService.post<RepeatTradeResponse>(
-        API_ENDPOINTS.REPEAT_TRADE,
+      apiService.post<TResponse>(
+        endpoint,
         request,
         headers
       )
     );
+  }
+
+  /**
+   * Gets the API endpoint for a given strategy
+   * @param strategy The trading strategy
+   * @returns The corresponding API endpoint
+   */
+  private getStrategyEndpoint(strategy: TradeStrategy): string {
+    switch (strategy) {
+      case TradeStrategy.REPEAT:
+        return API_ENDPOINTS.REPEAT_TRADE;
+      case TradeStrategy.MARTINGALE:
+        return API_ENDPOINTS.Martingale_Trade;
+      case TradeStrategy.THRESHOLD:
+        return API_ENDPOINTS.Threshold_Trade;
+      default:
+        throw new Error(`Unsupported strategy: ${strategy}`);
+    }
   }
 
   /**
@@ -117,7 +141,6 @@ class TradeService {
       `Operation failed after ${this.retryAttempts} attempts. Last error: ${lastError?.message}`
     );
   }
-
 }
 
 // Export singleton instance
