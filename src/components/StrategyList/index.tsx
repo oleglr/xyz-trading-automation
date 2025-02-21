@@ -38,7 +38,7 @@ const strategies: Strategy[] = [
     risk: "medium",
     profit: "limited",
     category: "short-puts",
-    isAvailable: false,
+    isAvailable: true,
   },
   {
     id: "martingale-trade",
@@ -47,7 +47,7 @@ const strategies: Strategy[] = [
     risk: "low",
     profit: "limited",
     category: "iron-condors",
-    isAvailable: false,
+    isAvailable: true,
   },
   {
     id: "covered-call-income",
