@@ -196,11 +196,11 @@
       padding: 6px 12px;
       border-radius: 6px;
       transition: all 0.2s ease;
-      background: rgba(255, 68, 79, 0.1);
+      background: rgb(0 208 255 / 8%);
       
       &:hover:not(:disabled) {
         color: var(--accent-color);
-        background: rgba(255, 68, 79, 0.15);
+        background: rgb(0 208 255 / 8%);
         transform: translateX(4px);
       }
 
@@ -221,10 +221,10 @@
       }
 
       [data-theme='dark'] & {
-        background: rgba(255, 68, 79, 0.15);
+        background: rgb(0 208 255 / 8%);
         
         &:hover:not(:disabled) {
-          background: rgba(255, 68, 79, 0.2);
+          background: rgb(0 208 255 / 8%);
         }
 
         &:disabled {
