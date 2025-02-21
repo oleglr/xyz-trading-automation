@@ -36,7 +36,7 @@ export function ProcessingStackProvider({ children }: { children: ReactNode }) {
     let completedTrades = 0;
     let profit = 0;
     const interval = setInterval(() => {
-      if (completedTrades < process.totalTrades) {
+      if (completedTrades < (process.tradeInfo.number_of_trade ?? 0)) {
         completedTrades++;
         profit += Math.random() * 2 - 1; // Random profit between -1 and 1
         

@@ -6,9 +6,12 @@ export const API_CONFIG = {
 }
 
 export const API_ENDPOINTS = {
-  // Define your REST API endpoints here
-  EXAMPLE: '/api/example',
-  // Add more endpoints as needed
+  // Trading endpoints
+  REPEAT_TRADE: '/repeat-trade',
+  IS_TRADING: '/is-trading',
+  STOP_TRADING: '/stop-trading',
+  // WebSocket endpoint
+  WS: '/ws',
 }
 
 export const WS_EVENTS = {
@@ -17,5 +20,8 @@ export const WS_EVENTS = {
   DISCONNECT: 'disconnect',
   ERROR: 'error',
   MESSAGE: 'message',
-  // Add more events as needed
+  // Trading specific events
+  TRADE_UPDATE: 'trade_update',
+  TRADE_COMPLETE: 'trade_complete',
+  TRADE_ERROR: 'trade_error',
 }

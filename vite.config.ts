@@ -38,47 +38,14 @@ export default defineConfig({
     port: 3000,
     open: true,
     proxy: {
-      '/api/v2/sse': {
+      '/api/v2': {
         target: 'https://pr92.mobile-bot.deriv.dev',
         changeOrigin: true,
         secure: false,
+        ws: true,
         configure: (proxy) => {
-          proxy.on('proxyReq', (proxyReq, req) => {
-            // Forward auth headers
-            const authHeaders = ['loginid', 'authorize', 'auth-url'];
-            authHeaders.forEach(header => {
-              const value = req.headers[header];
-              if (value) {
-                proxyReq.setHeader(header, value);
-              }
-            });
-
-            // Set SSE headers
-            proxyReq.setHeader('Accept', 'text/event-stream');
-            proxyReq.setHeader('Cache-Control', 'no-cache');
-            proxyReq.setHeader('Connection', 'keep-alive');
-
-            // Log proxy requests for debugging
-            console.log('Proxying request:', {
-              url: req.url,
-              method: req.method,
-              headers: proxyReq.getHeaders()
-            });
-          });
-
-          proxy.on('proxyRes', (proxyRes, req) => {
-            console.log('Proxy response:', {
-              url: req.url,
-              status: proxyRes.statusCode,
-              headers: proxyRes.headers
-            });
-          });
-
           proxy.on('error', (err) => {
-            console.error('Proxy error:', {
-              message: err.message,
-              stack: err.stack
-            });
+            console.error('Proxy error:', err);
           });
         }
       }

@@ -38,7 +38,14 @@ export function StrategyDrawer({ strategy, onClose, onSubmit }: StrategyDrawerPr
       case 'repeat-trade':
         return <RepeatTradeForm onSubmit={onSubmit} />;
       default:
-        return <StrategyForm onSubmit={onSubmit} />;
+        return <StrategyForm onSubmit={(values) => onSubmit({
+          amount: values.delta * 100,
+          basis: 'payout',
+          contract_type: 'CALL',
+          currency: 'USD',
+          symbol: 'R_100',
+          proposal: values.dte
+        })} />;
     }
   };
 

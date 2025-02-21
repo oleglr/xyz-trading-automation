@@ -15,6 +15,7 @@ export interface ExtendedAuthorize {
   [key: string]: unknown;
 }
 
-export interface AuthorizeResponse extends Omit<BaseAuthorizeResponse, 'authorize'> {
+export interface AuthorizeResponse extends BaseAuthorizeResponse {
   authorize: ExtendedAuthorize;
+  msg_type: 'authorize';
 }

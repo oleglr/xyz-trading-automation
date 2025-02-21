@@ -4,7 +4,7 @@ import { oauthService } from "./services/oauth/oauthService";
 import { useWebSocket } from "./hooks/useWebSocket";
 import { useAuth } from "./contexts/AuthContext";
 import { useNavigation } from "./contexts/NavigationContext";
-import { AuthorizeResponse } from "./types/websocket";
+import { AuthorizeResponse } from "./types/auth";
 import { StrategyList } from "./components/StrategyList";
 import { Header } from "./components/Header";
 import { Navigation } from "./components/Navigation";
