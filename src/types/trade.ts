@@ -1,24 +1,20 @@
 // Trade request types
-export interface RepeatTradeRequest {
-  number_of_trades: number;
-  proposal: number;
-  amount: number;
+export interface CommonTradeParams {
+  proposal: 1;
   basis: 'stake' | 'payout';
-  contract_type: string;
-  currency: string;
+  contract_type?: ContractType,
+  currency?: string,
+}
+
+
+export interface RepeatTradeRequest extends CommonTradeParams {
+  number_of_trades: number;
+  amount: number;
   symbol: string;
   growth_rate: number;
   limit_order?: {
     take_profit: number;
   };
-}
-
-// Trade response types
-export interface RepeatTradeResponse {
-  session_id: string;
-  status: string;
-  symbol: string;
-  trades: number;
 }
 
 // Trade status types
@@ -56,17 +52,6 @@ export interface TradeStatus {
 // Error types
 export interface TradeError {
   error: string;
-}
-
-// Trade form types
-export interface RepeatTradeFormValues {
-  trade_type: string;
-  strategy: string;
-  asset: string;
-  initial_stake: number;
-  growth_rate: number;
-  profit_threshold: number;
-  loss_threshold: number;
 }
 
 // Trade status enums

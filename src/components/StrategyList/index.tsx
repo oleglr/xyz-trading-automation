@@ -5,21 +5,8 @@ import { StrategyFilters } from "../StrategyFilters";
 import { StrategyDrawer } from "../StrategyDrawer";
 import "./styles.scss";
 
-interface Strategy {
-  id: string;
-  title: string;
-  description: string;
-  risk: "low" | "medium" | "high";
-  profit: "limited" | "unlimited";
-  category:
-    | "all"
-    | "long-calls"
-    | "short-puts"
-    | "iron-condors"
-    | "covered-calls"
-    | "bull-spreads";
-  isAvailable?: boolean;
-}
+import { Strategy, FilterKey } from "../../types/strategy";
+import { FormValues } from "../../types/form";
 
 const strategies: Strategy[] = [
   {
@@ -48,37 +35,7 @@ const strategies: Strategy[] = [
     profit: "limited",
     category: "iron-condors",
     isAvailable: true,
-  },
-  {
-    id: "covered-call-income",
-    title: "Covered Call Income",
-    description:
-      "Generate monthly income by selling covered calls on dividend stocks",
-    risk: "low",
-    profit: "limited",
-    category: "covered-calls",
-    isAvailable: false,
-  },
-  {
-    id: "bull-call-spread",
-    title: "Bull Call Spread",
-    description:
-      "Buy and sell calls at different strikes for a bullish outlook with defined risk",
-    risk: "medium",
-    profit: "limited",
-    category: "bull-spreads",
-    isAvailable: false,
-  },
-  {
-    id: "momentum-call-buyer",
-    title: "Momentum Call Buyer",
-    description:
-      "Buy calls on stocks showing strong upward momentum and high relative strength",
-    risk: "high",
-    profit: "unlimited",
-    category: "long-calls",
-    isAvailable: false,
-  },
+  }
 ];
 
 export function StrategyList() {
@@ -86,7 +43,7 @@ export function StrategyList() {
     null
   );
   const [selectedFilter, setSelectedFilter] =
-    useState<Strategy["category"]>("all");
+    useState<FilterKey>("all");
   const [searchText, setSearchText] = useState("");
 
   const handleCreateStrategy = (strategy: Strategy) => {
@@ -97,21 +54,7 @@ export function StrategyList() {
     setSelectedStrategy(null);
   };
 
-  interface FormValues {
-    number_of_trades?: number;
-    proposal?: number;
-    amount?: number;
-    basis?: string;
-    contract_type?: string;
-    currency?: string;
-    symbol?: string;
-    growth_rate?: number;
-    limit_order?: {
-      take_profit: number;
-    };
-  }
-
-  const handleSubmitForm = (values: FormValues) => {
+  const handleSubmitForm = async (values: FormValues): Promise<void> => {
     console.log("Strategy values:", values);
     setSelectedStrategy(null);
   };
@@ -131,9 +74,7 @@ export function StrategyList() {
       <div className="strategy-list-header">
         <StrategyFilters
           selectedFilter={selectedFilter}
-          onFilterChange={(filter) =>
-            setSelectedFilter(filter as Strategy["category"])
-          }
+          onFilterChange={setSelectedFilter}
           searchText={searchText}
           onSearchChange={setSearchText}
         />

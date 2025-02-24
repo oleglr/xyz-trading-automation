@@ -7,34 +7,7 @@ import { TradeErrorBoundary } from '../ErrorBoundary/TradeErrorBoundary';
 import { TradeStatusEnum } from '../../types/trade';
 import './styles.scss';
 
-// Field types
-export type FieldType = 'text' | 'number' | 'number-prefix' | 'select';
-export type PrefixType = 'currency' | 'percentage';
-
-// Basic field configuration from strategy
-export interface FieldConfig {
-  name: string;
-  label: string;
-  type: FieldType;
-  prefixType?: PrefixType; // For number-prefix fields
-  options?: { value: string; label: string }[]; // For select fields
-}
-
-export interface FormConfig {
-  fields: FieldConfig[];
-}
-
-// Form values type
-export interface FormValues {
-  [key: string]: string | number;
-}
-
-interface StrategyFormProps {
-  config: FormConfig;
-  onSubmit: (values: FormValues) => Promise<void>;
-  strategyType: string;
-  tradeType: string;
-}
+import { FieldConfig, FormValues, StrategyFormProps, PrefixType } from '../../types/form';
 
 export function StrategyForm({ 
   config, 
