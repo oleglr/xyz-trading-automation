@@ -9,6 +9,7 @@ import { StrategyList } from "./components/StrategyList";
 import { Header } from "./components/Header";
 import { Navigation } from "./components/Navigation";
 import { Settings } from "./components/Settings";
+import Positions from "./components/Positions";
 
 import "./styles/App.scss";
 
@@ -22,7 +23,7 @@ function MainContent() {
       case "strategies":
         return <StrategyList />;
       case "trade-logs":
-        return <div>Positions (Coming Soon)</div>;
+        return <Positions />;
       case "templates":
         return <div>Templates (Coming Soon)</div>;
       case "settings":

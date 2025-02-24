@@ -45,12 +45,7 @@ export interface TradeInfo {
 }
 
 export interface TradeStatus {
-  is_completed: boolean;
-  login_id: string;
-  session_id: string;
-  strategy: string;
-  symbol: string;
-  trade_info: TradeInfo;
+  tradeinfo_list: TradeInfo[];
 }
 
 // Error types
