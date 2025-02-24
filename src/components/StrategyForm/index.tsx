@@ -1,19 +1,28 @@
-import { Form, Input, InputNumber, Button, message, Select } from 'antd';
-import type { Rule } from 'antd/es/form';
-import { InfoCircleOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { useState } from 'react';
-import { useProcessingStack } from '../../contexts/ProcessingStackContext';
-import { TradeErrorBoundary } from '../ErrorBoundary/TradeErrorBoundary';
-import { TradeStatusEnum } from '../../types/trade';
-import './styles.scss';
+import { Form, Input, InputNumber, Button, Select } from "antd";
+import type { Rule } from "antd/es/form";
+import {
+  InfoCircleOutlined,
+  MinusOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
+import { useState } from "react";
+import { useProcessingStack } from "../../contexts/ProcessingStackContext";
+import { TradeErrorBoundary } from "../ErrorBoundary/TradeErrorBoundary";
+import { TradeStatusEnum } from "../../types/trade";
+import "./styles.scss";
 
-import { FieldConfig, FormValues, StrategyFormProps, PrefixType } from '../../types/form';
+import {
+  FieldConfig,
+  FormValues,
+  StrategyFormProps,
+  PrefixType,
+} from "../../types/form";
 
-export function StrategyForm({ 
-  config, 
-  onSubmit, 
+export function StrategyForm({
+  config,
+  onSubmit,
   strategyType,
-  tradeType 
+  tradeType,
 }: StrategyFormProps) {
   const [form] = Form.useForm<FormValues>();
   const { addProcess } = useProcessingStack();
@@ -25,7 +34,10 @@ export function StrategyForm({
       setIsSubmitting(true);
       setIsRunning(true);
 
-      const sessionId = Math.random().toString(36).substring(7).toUpperCase();
+      // Call the provided onSubmit handler
+      await onSubmit(values);
+
+      /* const sessionId = Math.random().toString(36).substring(7).toUpperCase();
 
       // Add to processing stack
       addProcess({
@@ -47,14 +59,10 @@ export function StrategyForm({
           ...values
         }
       });
-
-      // Call the provided onSubmit handler
-      await onSubmit(values);
-
-      message.success('Trading session started successfully');
+       */
     } catch (error) {
-      console.error('Failed to start trading session:', error);
-      
+      console.error("Failed to start trading session:", error);
+
       // Add error process to stack
       addProcess({
         sessionId: Math.random().toString(36).substring(7).toUpperCase(),
@@ -62,9 +70,12 @@ export function StrategyForm({
         strategy: strategyType,
         status: TradeStatusEnum.ERROR,
         is_completed: true,
-        error: error instanceof Error ? error.message : 'Failed to start trading session',
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to start trading session",
         tradeInfo: {
-          session_id: '',
+          session_id: "",
           contracts: [],
           start_time: new Date().toISOString(),
           end_time: new Date().toISOString(),
@@ -73,10 +84,10 @@ export function StrategyForm({
           loss_profit: 0,
           strategy: strategyType,
           initial: values.initial_stake as number,
-          ...values
-        }
+          ...values,
+        },
       });
-      
+
       setIsRunning(false);
     } finally {
       setIsSubmitting(false);
@@ -98,25 +109,25 @@ export function StrategyForm({
   const renderField = (field: FieldConfig) => {
     const { name, label, type, options, prefixType } = field;
 
-    const isNumberField = type === 'number' || type === 'number-prefix';
+    const isNumberField = type === "number" || type === "number-prefix";
 
     const numberRules: Rule[] = [
       { required: true, message: `Please enter ${label.toLowerCase()}` },
-      { type: 'number', min: 0, message: 'Must be a positive number' }
+      { type: "number", min: 0, message: "Must be a positive number" },
     ];
 
     const textRules: Rule[] = [
-      { required: true, message: `Please enter ${label.toLowerCase()}` }
+      { required: true, message: `Please enter ${label.toLowerCase()}` },
     ];
 
     const getPrefix = (prefixType?: PrefixType) => {
       switch (prefixType) {
-        case 'currency':
-          return 'USD';
-        case 'percentage':
-          return '%';
+        case "currency":
+          return "USD";
+        case "percentage":
+          return "%";
         default:
-          return '';
+          return "";
       }
     };
 
@@ -126,54 +137,48 @@ export function StrategyForm({
           <span className="title">{label}</span>
           <InfoCircleOutlined className="info-icon" />
         </div>
-        {type === 'select' ? (
+        {type === "select" ? (
           <div className="select-container">
-            <Form.Item 
-              name={name}
-              noStyle
-              rules={textRules}
-            >
+            <Form.Item name={name} noStyle rules={textRules}>
               <Select
                 showSearch
                 placeholder={`Select ${label.toLowerCase()}`}
                 optionFilterProp="label"
                 options={options}
-                getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
+                getPopupContainer={(trigger) =>
+                  trigger.parentNode as HTMLElement
+                }
               />
             </Form.Item>
           </div>
         ) : (
           <div className="input-field">
             {isNumberField && (
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="minus-btn"
                 onClick={() => handleDecrement(name)}
               >
                 <MinusOutlined />
               </button>
             )}
-            {type === 'number-prefix' && prefixType && (
+            {type === "number-prefix" && prefixType && (
               <span className="currency">{getPrefix(prefixType)}</span>
             )}
-            <Form.Item 
+            <Form.Item
               name={name}
               noStyle
               rules={isNumberField ? numberRules : textRules}
             >
               {isNumberField ? (
-                <InputNumber
-                  style={{ width: '100%' }}
-                  min={0}
-                  precision={2}
-                />
+                <InputNumber style={{ width: "100%" }} min={0} precision={2} />
               ) : (
                 <Input />
               )}
             </Form.Item>
             {isNumberField && (
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="plus-btn"
                 onClick={() => handleIncrement(name)}
               >
@@ -212,23 +217,19 @@ export function StrategyForm({
           </div>
 
           {config.fields.map((field, index) => (
-            <div key={index}>
-              {renderField(field)}
-            </div>
+            <div key={index}>{renderField(field)}</div>
           ))}
         </Form>
 
         <div className="form-footer">
-          <Button className="load-button">
-            Save 
-          </Button>
-          <Button 
+          <Button className="load-button">Save</Button>
+          <Button
             className="run-button"
             onClick={() => form.submit()}
             disabled={isRunning || isSubmitting}
             loading={isSubmitting}
           >
-            {isSubmitting ? 'Starting...' : 'Run'}
+            {isSubmitting ? "Starting..." : "Run"}
           </Button>
         </div>
       </div>

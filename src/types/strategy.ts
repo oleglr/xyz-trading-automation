@@ -34,10 +34,10 @@ export interface Strategy {
   isAvailable?: boolean;
 }
 
-export interface StrategyDrawerProps {
+export interface StrategyDrawerProps<T extends FormValues = FormValues> {
   strategy: Strategy | null;
   onClose: () => void;
-  onSubmit: (values: FormValues) => Promise<void>;
+  onSubmit: (values: T) => Promise<void>;
 }
 
 // Static symbol field that's common to all strategies
@@ -54,31 +54,57 @@ export const SYMBOL_FIELD = {
   ]
 };
 
+// Common fields for all strategies
+const COMMON_FIELDS = [
+  {
+    name: 'amount',
+    label: 'Amount',
+    type: 'number-prefix' as FieldType,
+    prefixType: 'currency' as PrefixType
+  },
+  {
+    name: 'growth_rate',
+    label: 'Growth Rate',
+    type: 'number-prefix' as FieldType,
+    prefixType: 'percentage' as PrefixType
+  }
+];
+
 // Define input parameters for each strategy
 export const STRATEGY_PARAMS: Record<string, FormConfig> = {
   'repeat-trade': {
     fields: [
+      ...COMMON_FIELDS,
       {
-        name: 'initial_stake',
-        label: 'Initial stake',
-        type: 'number-prefix' as FieldType,
-        prefixType: 'currency' as PrefixType
+        name: 'number_of_trades',
+        label: 'Number of Trades',
+        type: 'number' as FieldType
       },
       {
-        name: 'growth_rate',
-        label: 'Growth rate',
+        name: 'limit_order.take_profit',
+        label: 'Take Profit',
         type: 'number-prefix' as FieldType,
-        prefixType: 'percentage' as PrefixType
+        prefixType: 'currency' as PrefixType
+      }
+    ]
+  },
+  'threshold-trade': {
+    fields: [
+      ...COMMON_FIELDS,
+      {
+        name: 'duration',
+        label: 'Duration',
+        type: 'number' as FieldType
       },
       {
         name: 'profit_threshold',
-        label: 'Profit threshold',
+        label: 'Profit Threshold',
         type: 'number-prefix' as FieldType,
         prefixType: 'currency' as PrefixType
       },
       {
         name: 'loss_threshold',
-        label: 'Loss threshold',
+        label: 'Loss Threshold',
         type: 'number-prefix' as FieldType,
         prefixType: 'currency' as PrefixType
       }
@@ -86,58 +112,30 @@ export const STRATEGY_PARAMS: Record<string, FormConfig> = {
   },
   'martingale-trade': {
     fields: [
-      {
-        name: 'initial_stake',
-        label: 'Initial stake',
-        type: 'number-prefix' as FieldType,
-        prefixType: 'currency' as PrefixType
-      },
+      ...COMMON_FIELDS,
       {
         name: 'multiplier',
-        label: 'Loss multiplier',
+        label: 'Multiplier',
         type: 'number-prefix' as FieldType,
         prefixType: 'percentage' as PrefixType
       },
       {
-        name: 'max_trades',
-        label: 'Maximum trades',
+        name: 'max_steps',
+        label: 'Maximum Steps',
         type: 'number' as FieldType
       },
       {
-        name: 'profit_target',
-        label: 'Profit target',
+        name: 'profit_threshold',
+        label: 'Profit Threshold',
         type: 'number-prefix' as FieldType,
         prefixType: 'currency' as PrefixType
       },
       {
-        name: 'stop_loss',
-        label: 'Stop loss',
+        name: 'loss_threshold',
+        label: 'Loss Threshold',
         type: 'number-prefix' as FieldType,
         prefixType: 'currency' as PrefixType
-      },
-      {
-        name: 'reset_on_win',
-        label: 'Reset on win',
-        type: 'select' as FieldType,
-        options: [
-          { value: "yes", label: 'Yes' },
-          { value: "no", label: 'No' }
-        ]
       }
     ]
   }
 };
-
-export interface StrategyFormValues {
-  number_of_trades?: number;
-  proposal?: number;
-  amount?: number;
-  basis?: string;
-  contract_type?: string;
-  currency?: string;
-  symbol?: string;
-  growth_rate?: number;
-  limit_order?: {
-    take_profit: number;
-  };
-}

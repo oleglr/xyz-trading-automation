@@ -1,20 +1,34 @@
+import { FormValues } from "./form";
+
 // Trade request types
-export interface CommonTradeParams {
+export interface CommonTradeParams extends FormValues {
   proposal: 1;
   basis: 'stake' | 'payout';
   contract_type?: ContractType,
   currency?: string,
-}
-
-
-export interface RepeatTradeRequest extends CommonTradeParams {
-  number_of_trades: number;
   amount: number;
   symbol: string;
   growth_rate: number;
+}
+
+export interface RepeatTradeRequest extends CommonTradeParams {
+  number_of_trades: number;
   limit_order?: {
     take_profit: number;
   };
+}
+
+export interface ThresholdTradeRequest extends CommonTradeParams {
+  duration: number;
+  profit_threshold: number;
+  loss_threshold: number;
+}
+
+export interface MartingaleTradeRequest extends CommonTradeParams {
+  multiplier: number;
+  max_steps: number;
+  profit_threshold: number;
+  loss_threshold: number;
 }
 
 // Trade status types

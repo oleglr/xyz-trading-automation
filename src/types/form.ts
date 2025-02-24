@@ -16,15 +16,14 @@ export interface FormConfig {
 }
 
 // Form values type
-export interface StrategyFormProps {
+export interface StrategyFormProps<T extends FormValues = FormValues> {
   config: FormConfig;
-  onSubmit: (values: FormValues) => Promise<void>;
+  onSubmit: (values: T) => Promise<void>;
   strategyType: string;
   tradeType: string;
 }
 
+// Base form values that all forms can extend
 export interface FormValues {
-  [key: string]: string | number | undefined;
-  asset?: string;
-  initial_stake?: number;
+  [key: string]: string | number | object | undefined;
 }
