@@ -22,7 +22,7 @@ function MainContent() {
       case "strategies":
         return <StrategyList />;
       case "trade-logs":
-        return <div>Trade Logs (Coming Soon)</div>;
+        return <div>Positions (Coming Soon)</div>;
       case "templates":
         return <div>Templates (Coming Soon)</div>;
       case "settings":
