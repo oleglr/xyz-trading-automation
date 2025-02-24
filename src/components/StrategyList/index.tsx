@@ -111,7 +111,7 @@ export function StrategyList() {
     };
   }
 
-  const handleSubmitForm = (values: FormValues) => {
+  const handleSubmitForm = async (values: FormValues): Promise<void> => {
     console.log("Strategy values:", values);
     setSelectedStrategy(null);
   };
