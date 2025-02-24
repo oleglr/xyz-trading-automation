@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Form, Input, InputNumber, Button, Select } from "antd";
 import type { Rule } from "antd/es/form";
 import {
@@ -5,10 +6,11 @@ import {
   MinusOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useProcessingStack } from "../../contexts/ProcessingStackContext";
 import { TradeErrorBoundary } from "../ErrorBoundary/TradeErrorBoundary";
-import { TradeStatusEnum } from "../../types/trade";
+import { TradeStatusEnum, TradeStrategy } from "../../types/trade";
+import { useTrade } from "../../contexts/TradeContext";
 import "./styles.scss";
 
 import {
@@ -20,8 +22,8 @@ import {
 
 export function StrategyForm({
   config,
-  onSubmit,
   strategyType,
+  strategyId,
   tradeType,
 }: StrategyFormProps) {
   const [form] = Form.useForm<FormValues>();
@@ -29,18 +31,23 @@ export function StrategyForm({
   const [isRunning, setIsRunning] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const { submitTrade, isSubmitting: isTradeSubmitting } = useTrade();
+
+  useEffect(() => {
+    setIsSubmitting(isTradeSubmitting);
+  }, [isTradeSubmitting]);
+
   const handleSubmit = async (values: FormValues) => {
     try {
-      setIsSubmitting(true);
       setIsRunning(true);
 
-      // Call the provided onSubmit handler
-      await onSubmit(values);
+      // Submit trade through trade context
+      const sessionId = await submitTrade(values, strategyId as TradeStrategy);
 
-      /* const sessionId = Math.random().toString(36).substring(7).toUpperCase();
+      console.log("Trade submitted with session ID:", sessionId);
 
       // Add to processing stack
-      addProcess({
+      /* addProcess({
         sessionId,
         symbol: values.asset as string,
         strategy: strategyType,
@@ -55,42 +62,17 @@ export function StrategyForm({
           win_profit: 0,
           loss_profit: 0,
           strategy: strategyType,
-          initial: values.initial_stake as number,
+          initial: values.amount as number,
           ...values
         }
       });
-       */
+
+      // Call the provided onSubmit handler if needed
+      await onSubmit?.(values); */
+
     } catch (error) {
       console.error("Failed to start trading session:", error);
-
-      // Add error process to stack
-      addProcess({
-        sessionId: Math.random().toString(36).substring(7).toUpperCase(),
-        symbol: values.asset as string,
-        strategy: strategyType,
-        status: TradeStatusEnum.ERROR,
-        is_completed: true,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to start trading session",
-        tradeInfo: {
-          session_id: "",
-          contracts: [],
-          start_time: new Date().toISOString(),
-          end_time: new Date().toISOString(),
-          total_profit: 0,
-          win_profit: 0,
-          loss_profit: 0,
-          strategy: strategyType,
-          initial: values.initial_stake as number,
-          ...values,
-        },
-      });
-
       setIsRunning(false);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 

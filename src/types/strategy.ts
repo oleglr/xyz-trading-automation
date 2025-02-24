@@ -1,4 +1,4 @@
-import { FormConfig, FormValues, FieldType, PrefixType } from './form';
+import { FormConfig, FieldType, PrefixType } from './form';
 
 export const filterButtons = [
   { key: "all", label: "All Strategies" },
@@ -34,23 +34,21 @@ export interface Strategy {
   isAvailable?: boolean;
 }
 
-export interface StrategyDrawerProps<T extends FormValues = FormValues> {
+export interface StrategyDrawerProps {
   strategy: Strategy | null;
   onClose: () => void;
-  onSubmit: (values: T) => Promise<void>;
 }
 
 // Static symbol field that's common to all strategies
 export const SYMBOL_FIELD = {
-  name: 'asset',
+  name: 'symbol',
   label: 'Symbol',
   type: 'select' as FieldType,
   options: [
-    { value: "volatility_100_1s", label: "Volatility 100 (1s) Index" },
-    { value: "volatility_75_1s", label: "Volatility 75 (1s) Index" },
-    { value: "volatility_50_1s", label: "Volatility 50 (1s) Index" },
-    { value: "volatility_25_1s", label: "Volatility 25 (1s) Index" },
-    { value: "volatility_10_1s", label: "Volatility 10 (1s) Index" }
+    { value: "R_100", label: "Volatility 100 (1s) Index" },
+    { value: "R_75", label: "Volatility 75 (1s) Index" },
+    { value: "R_50", label: "Volatility 50 (1s) Index" },
+    { value: "R_25", label: "Volatility 25 (1s) Index" }
   ]
 };
 

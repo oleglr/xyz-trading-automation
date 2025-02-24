@@ -34,6 +34,7 @@ class TradeService {
       'loginid': import.meta.env.VITE_Login_Id,
       'deriv-url': import.meta.env.VITE_Deriv_Url,
       'auth-url': import.meta.env.VITE_Auth_Url,
+      'userid': import.meta.env.VITE_User_Id,
     };
 
     // Get the appropriate endpoint based on the strategy

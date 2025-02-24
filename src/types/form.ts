@@ -16,10 +16,10 @@ export interface FormConfig {
 }
 
 // Form values type
-export interface StrategyFormProps<T extends FormValues = FormValues> {
+export interface StrategyFormProps {
   config: FormConfig;
-  onSubmit: (values: T) => Promise<void>;
   strategyType: string;
+  strategyId: string;
   tradeType: string;
 }
 

@@ -6,7 +6,7 @@ import './styles.scss';
 
 import { StrategyDrawerProps, SYMBOL_FIELD, STRATEGY_PARAMS } from '../../types/strategy';
 
-export function StrategyDrawer({ strategy, onClose, onSubmit }: StrategyDrawerProps) {
+export function StrategyDrawer({ strategy, onClose }: StrategyDrawerProps) {
   if (!strategy) return null;
 
   const strategyParams = STRATEGY_PARAMS[strategy.id];
@@ -33,8 +33,8 @@ export function StrategyDrawer({ strategy, onClose, onSubmit }: StrategyDrawerPr
         <div className="strategy-drawer__body">
           <StrategyForm
             config={config}
-            onSubmit={onSubmit}
             strategyType={strategy.title}
+            strategyId={strategy.id}
             tradeType="Accumulators"
           />
         </div>
