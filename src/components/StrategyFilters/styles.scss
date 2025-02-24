@@ -48,8 +48,8 @@
     }
 
     &:hover {
-      border-color: #ff444f !important;
-      color: #ff444f !important;
+      border-color: #00d0ff !important;
+      color: #00d0ff !important;
     }
   }
 
@@ -96,15 +96,15 @@
     transition: all 0.2s ease !important;
     
     &:hover {
-      color: #ff444f !important;
-      border-color: #ff444f !important;
+      color: #00d0ff !important;
+      border-color: #00d0ff !important;
       background: #F9FAFB !important;
     }
     
     &.ant-btn-primary {
       color: #fff !important;
-      background: #ff444f !important;
-      border-color: #ff444f !important;
+      background: #00d0ff !important;
+      border-color: #00d0ff !important;
 
       &:hover {
         opacity: 0.9 !important;
@@ -150,16 +150,16 @@
       margin-right: 4px;
 
       &:hover {
-        color: #ff444f;
+        color: #00d0ff;
       }
     }
 
     &:hover {
-      border-color: #ff444f !important;
+      border-color: #00d0ff !important;
     }
 
     &:focus-within {
-      border-color: #ff444f !important;
+      border-color: #00d0ff !important;
       box-shadow: none !important;
     }
 
@@ -195,7 +195,7 @@
       transition: all 0.2s ease;
 
       &:hover {
-        color: #ff444f !important;
+        color: #00d0ff !important;
       }
     }
 
@@ -230,7 +230,7 @@
       background: transparent !important;
 
       &:hover {
-        color: #ff444f !important;
+        color: #00d0ff !important;
         background: rgba(255, 68, 79, 0.05) !important;
       }
     }
@@ -246,13 +246,13 @@
       color: #D1D5DB !important;
 
       &:hover {
-        border-color: #ff444f !important;
-        color: #ff444f !important;
+        border-color: #00d0ff !important;
+        color: #00d0ff !important;
       }
 
       &.ant-btn-primary {
-        background: #ff444f !important;
-        border-color: #ff444f !important;
+        background: #00d0ff !important;
+        border-color: #00d0ff !important;
         color: #fff !important;
       }
     }
@@ -270,11 +270,11 @@
       }
 
       &:hover {
-        border-color: #ff444f !important;
+        border-color: #00d0ff !important;
       }
 
       &:focus-within {
-        border-color: #ff444f !important;
+        border-color: #00d0ff !important;
       }
     }
 

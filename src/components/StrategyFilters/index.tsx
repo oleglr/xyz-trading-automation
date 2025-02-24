@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Button, Input, Modal } from 'antd';
-import { SearchOutlined, FilterOutlined } from '@ant-design/icons';
-import './styles.scss';
+import { useState } from "react";
+import { Button, Input, Modal } from "antd";
+import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
+import "./styles.scss";
 
 interface StrategyFiltersProps {
   selectedFilter: string;
@@ -11,19 +11,19 @@ interface StrategyFiltersProps {
 }
 
 const filterButtons = [
-  { key: 'all', label: 'All Strategies' },
-  { key: 'long-calls', label: 'Long Calls' },
-  { key: 'short-puts', label: 'Short Puts' },
-  { key: 'iron-condors', label: 'Iron Condors' },
-  { key: 'covered-calls', label: 'Covered Calls' },
-  { key: 'bull-spreads', label: 'Bull Spreads' }
+  { key: "all", label: "All Strategies" },
+  { key: "long-calls", label: "Long Calls" },
+  { key: "short-puts", label: "Short Puts" },
+  { key: "iron-condors", label: "Iron Condors" },
+  { key: "covered-calls", label: "Covered Calls" },
+  { key: "bull-spreads", label: "Bull Spreads" },
 ] as const;
 
 export function StrategyFilters({
   selectedFilter,
   onFilterChange,
   searchText,
-  onSearchChange
+  onSearchChange,
 }: StrategyFiltersProps) {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -36,10 +36,10 @@ export function StrategyFilters({
         {/* Desktop view */}
         <div className="strategy-filters__desktop">
           <div className="strategy-filters__buttons">
-            {filterButtons.map(filter => (
+            {filterButtons.map((filter) => (
               <Button
                 key={filter.key}
-                type={selectedFilter === filter.key ? 'primary' : 'default'}
+                type={selectedFilter === filter.key ? "primary" : "default"}
                 onClick={() => onFilterChange(filter.key)}
                 className="strategy-filters__button"
               >
@@ -51,7 +51,7 @@ export function StrategyFilters({
 
         {/* Mobile view */}
         <div className="strategy-filters__mobile">
-          <Button 
+          <Button
             icon={<FilterOutlined />}
             onClick={showModal}
             className="strategy-filters__mobile-button"
@@ -64,7 +64,7 @@ export function StrategyFilters({
           placeholder="Search strategies..."
           prefix={<SearchOutlined />}
           value={searchText}
-          onChange={e => onSearchChange(e.target.value)}
+          onChange={(e) => onSearchChange(e.target.value)}
           className="strategy-filters__search"
           allowClear
         />
@@ -79,10 +79,10 @@ export function StrategyFilters({
         className="strategy-filters__modal"
       >
         <div className="strategy-filters__modal-content">
-          {filterButtons.map(filter => (
+          {filterButtons.map((filter) => (
             <Button
               key={filter.key}
-              type={selectedFilter === filter.key ? 'primary' : 'default'}
+              type={selectedFilter === filter.key ? "primary" : "default"}
               onClick={() => {
                 onFilterChange(filter.key);
                 hideModal();

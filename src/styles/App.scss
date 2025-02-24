@@ -12,9 +12,7 @@
   transition: background-color 0.3s ease;
   
   [data-theme='light'] & {
-    background: linear-gradient(135deg, 
-      rgba(255, 68, 79, 0.05) 0%, 
-      rgba(255, 255, 255, 0.312) 100%);
+    background: #f2f2f2;
   }
   
   [data-theme='dark'] & {
@@ -83,10 +81,8 @@
 .ant-card,
 .ant-modal-content,
 .ant-drawer-content,
-.ant-select-dropdown,
 .ant-picker-panel-container,
 .ant-input,
-.ant-select-selector,
 .ant-btn {
   transition: all 0.3s ease;
 }

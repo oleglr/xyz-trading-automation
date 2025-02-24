@@ -8,7 +8,7 @@ class ApiService {
   private constructor() {
     // Use relative URL for proxy
     this.api = axios.create({
-      baseURL: '/api/v2', // This will be prefixed to all endpoints
+      baseURL: '/api/v2/', // This will be prefixed to all endpoints
       timeout: API_CONFIG.TIMEOUT,
       headers: {
         'Content-Type': 'application/json',
