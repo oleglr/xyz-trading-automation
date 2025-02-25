@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "node scripts/setup-hooks.js",
+    "test:pre-commit": "node scripts/test-pre-commit.js",
+    "test:build-error": "node scripts/test-build-error.js",
+    "test:build-error:restore": "node scripts/test-build-error.js --restore"
   },
   "dependencies": {
     "@ant-design/icons": "^5.6.1",
