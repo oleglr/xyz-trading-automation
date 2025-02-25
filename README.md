@@ -93,6 +93,7 @@ cd champion-automation
 ```bash
 npm install
 ```
+This will automatically set up Git hooks including the pre-commit hook that verifies successful builds.
 
 3. Configure environment variables:
 ```bash
@@ -124,6 +125,18 @@ npm run build
 ```
 
 ## 💻 Development Guidelines
+
+### Git Hooks
+
+#### Pre-commit Hook
+This project uses a pre-commit hook to ensure code quality by verifying successful builds before allowing commits:
+
+- **Functionality**: Automatically runs `npm run build` before each commit
+- **Error Handling**: Prevents commits if the build fails and displays helpful error messages
+- **Bypass Options**:
+  - For emergency situations: `git commit --no-verify`
+  - Using environment variable: `SKIP_BUILD_CHECK=1 git commit`
+- **Testing the Hook**: Run `npm run test:pre-commit` to test the pre-commit hook without making a commit
 
 ### Code Style
 - Follow TypeScript strict mode guidelines
@@ -186,6 +199,7 @@ npm run preview
 ## 🔄 CI/CD
 
 Automated workflows include:
+- Pre-commit hooks for build verification
 - Code quality checks
 - Type checking
 - Unit tests
@@ -199,6 +213,7 @@ Additional documentation:
 - [Component Library](./docs/components.md)
 - [State Management](./docs/state.md)
 - [Testing Guide](./docs/testing.md)
+- [Git Hooks](./docs/git-hooks.md)
 
 ## 🤝 Contributing
 
