@@ -18,7 +18,7 @@ const menuItems = [
   {
     key: 'trade-logs',
     icon: <HistoryOutlined />,
-    label: 'Trade Logs',
+    label: 'Positions',
   },
   {
     key: 'templates',

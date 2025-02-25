@@ -39,7 +39,7 @@ export default defineConfig({
     open: true,
     proxy: {
       '/api/v2': {
-        target: 'https://pr92.mobile-bot.deriv.dev',
+        target: process.env.VITE_API_URL || 'https://pr92.mobile-bot.deriv.dev',
         changeOrigin: true,
         secure: false,
         ws: true,

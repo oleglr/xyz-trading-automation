@@ -6,7 +6,6 @@ import { StrategyDrawer } from "../StrategyDrawer";
 import "./styles.scss";
 
 import { Strategy, FilterKey } from "../../types/strategy";
-import { FormValues } from "../../types/form";
 
 const strategies: Strategy[] = [
   {
@@ -51,11 +50,6 @@ export function StrategyList() {
   };
 
   const handleCloseDrawer = () => {
-    setSelectedStrategy(null);
-  };
-
-  const handleSubmitForm = async (values: FormValues): Promise<void> => {
-    console.log("Strategy values:", values);
     setSelectedStrategy(null);
   };
 
@@ -126,7 +120,6 @@ export function StrategyList() {
         <StrategyDrawer 
           strategy={selectedStrategy}
           onClose={handleCloseDrawer}
-          onSubmit={handleSubmitForm}
         />
       </div>
     </div>
