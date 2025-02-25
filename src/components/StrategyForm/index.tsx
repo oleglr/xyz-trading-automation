@@ -1,61 +1,53 @@
-import { Form, Input, InputNumber, Button, message, Select } from 'antd';
-import type { Rule } from 'antd/es/form';
-import { InfoCircleOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { useState } from 'react';
-import { useProcessingStack } from '../../contexts/ProcessingStackContext';
-import { TradeErrorBoundary } from '../ErrorBoundary/TradeErrorBoundary';
-import { TradeStatusEnum } from '../../types/trade';
-import './styles.scss';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Form, Input, InputNumber, Button, Select } from "antd";
+import type { Rule } from "antd/es/form";
+import {
+  InfoCircleOutlined,
+  MinusOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
+import { useState, useEffect } from "react";
+import { useProcessingStack } from "../../contexts/ProcessingStackContext";
+import { TradeErrorBoundary } from "../ErrorBoundary/TradeErrorBoundary";
+import { TradeStatusEnum, TradeStrategy } from "../../types/trade";
+import { useTrade } from "../../contexts/TradeContext";
+import "./styles.scss";
 
-// Field types
-export type FieldType = 'text' | 'number' | 'number-prefix' | 'select';
-export type PrefixType = 'currency' | 'percentage';
+import {
+  FieldConfig,
+  FormValues,
+  StrategyFormProps,
+  PrefixType,
+} from "../../types/form";
 
-// Basic field configuration from strategy
-export interface FieldConfig {
-  name: string;
-  label: string;
-  type: FieldType;
-  prefixType?: PrefixType; // For number-prefix fields
-  options?: { value: string; label: string }[]; // For select fields
-}
-
-export interface FormConfig {
-  fields: FieldConfig[];
-}
-
-// Form values type
-export interface FormValues {
-  [key: string]: string | number;
-}
-
-interface StrategyFormProps {
-  config: FormConfig;
-  onSubmit: (values: FormValues) => Promise<void>;
-  strategyType: string;
-  tradeType: string;
-}
-
-export function StrategyForm({ 
-  config, 
-  onSubmit, 
+export function StrategyForm({
+  config,
   strategyType,
-  tradeType 
+  strategyId,
+  tradeType,
 }: StrategyFormProps) {
   const [form] = Form.useForm<FormValues>();
   const { addProcess } = useProcessingStack();
   const [isRunning, setIsRunning] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const { submitTrade, isSubmitting: isTradeSubmitting } = useTrade();
+
+  useEffect(() => {
+    setIsSubmitting(isTradeSubmitting);
+  }, [isTradeSubmitting]);
+
   const handleSubmit = async (values: FormValues) => {
     try {
-      setIsSubmitting(true);
       setIsRunning(true);
 
-      const sessionId = Math.random().toString(36).substring(7).toUpperCase();
+      // Submit trade through trade context
+      const sessionId = await submitTrade(values, strategyId as TradeStrategy);
+
+      console.log("Trade submitted with session ID:", sessionId);
 
       // Add to processing stack
-      addProcess({
+      /* addProcess({
         sessionId,
         symbol: values.asset as string,
         strategy: strategyType,
@@ -70,43 +62,17 @@ export function StrategyForm({
           win_profit: 0,
           loss_profit: 0,
           strategy: strategyType,
-          initial: values.initial_stake as number,
+          initial: values.amount as number,
           ...values
         }
       });
 
-      // Call the provided onSubmit handler
-      await onSubmit(values);
+      // Call the provided onSubmit handler if needed
+      await onSubmit?.(values); */
 
-      message.success('Trading session started successfully');
     } catch (error) {
-      console.error('Failed to start trading session:', error);
-      
-      // Add error process to stack
-      addProcess({
-        sessionId: Math.random().toString(36).substring(7).toUpperCase(),
-        symbol: values.asset as string,
-        strategy: strategyType,
-        status: TradeStatusEnum.ERROR,
-        is_completed: true,
-        error: error instanceof Error ? error.message : 'Failed to start trading session',
-        tradeInfo: {
-          session_id: '',
-          contracts: [],
-          start_time: new Date().toISOString(),
-          end_time: new Date().toISOString(),
-          total_profit: 0,
-          win_profit: 0,
-          loss_profit: 0,
-          strategy: strategyType,
-          initial: values.initial_stake as number,
-          ...values
-        }
-      });
-      
+      console.error("Failed to start trading session:", error);
       setIsRunning(false);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -125,25 +91,25 @@ export function StrategyForm({
   const renderField = (field: FieldConfig) => {
     const { name, label, type, options, prefixType } = field;
 
-    const isNumberField = type === 'number' || type === 'number-prefix';
+    const isNumberField = type === "number" || type === "number-prefix";
 
     const numberRules: Rule[] = [
       { required: true, message: `Please enter ${label.toLowerCase()}` },
-      { type: 'number', min: 0, message: 'Must be a positive number' }
+      { type: "number", min: 0, message: "Must be a positive number" },
     ];
 
     const textRules: Rule[] = [
-      { required: true, message: `Please enter ${label.toLowerCase()}` }
+      { required: true, message: `Please enter ${label.toLowerCase()}` },
     ];
 
     const getPrefix = (prefixType?: PrefixType) => {
       switch (prefixType) {
-        case 'currency':
-          return 'USD';
-        case 'percentage':
-          return '%';
+        case "currency":
+          return "USD";
+        case "percentage":
+          return "%";
         default:
-          return '';
+          return "";
       }
     };
 
@@ -153,54 +119,48 @@ export function StrategyForm({
           <span className="title">{label}</span>
           <InfoCircleOutlined className="info-icon" />
         </div>
-        {type === 'select' ? (
+        {type === "select" ? (
           <div className="select-container">
-            <Form.Item 
-              name={name}
-              noStyle
-              rules={textRules}
-            >
+            <Form.Item name={name} noStyle rules={textRules}>
               <Select
                 showSearch
                 placeholder={`Select ${label.toLowerCase()}`}
                 optionFilterProp="label"
                 options={options}
-                getPopupContainer={(trigger) => trigger.parentNode as HTMLElement}
+                getPopupContainer={(trigger) =>
+                  trigger.parentNode as HTMLElement
+                }
               />
             </Form.Item>
           </div>
         ) : (
           <div className="input-field">
             {isNumberField && (
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="minus-btn"
                 onClick={() => handleDecrement(name)}
               >
                 <MinusOutlined />
               </button>
             )}
-            {type === 'number-prefix' && prefixType && (
+            {type === "number-prefix" && prefixType && (
               <span className="currency">{getPrefix(prefixType)}</span>
             )}
-            <Form.Item 
+            <Form.Item
               name={name}
               noStyle
               rules={isNumberField ? numberRules : textRules}
             >
               {isNumberField ? (
-                <InputNumber
-                  style={{ width: '100%' }}
-                  min={0}
-                  precision={2}
-                />
+                <InputNumber style={{ width: "100%" }} min={0} precision={2} />
               ) : (
                 <Input />
               )}
             </Form.Item>
             {isNumberField && (
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="plus-btn"
                 onClick={() => handleIncrement(name)}
               >
@@ -239,23 +199,19 @@ export function StrategyForm({
           </div>
 
           {config.fields.map((field, index) => (
-            <div key={index}>
-              {renderField(field)}
-            </div>
+            <div key={index}>{renderField(field)}</div>
           ))}
         </Form>
 
         <div className="form-footer">
-          <Button className="load-button">
-            Save 
-          </Button>
-          <Button 
+          <Button className="load-button">Save</Button>
+          <Button
             className="run-button"
             onClick={() => form.submit()}
             disabled={isRunning || isSubmitting}
             loading={isSubmitting}
           >
-            {isSubmitting ? 'Starting...' : 'Run'}
+            {isSubmitting ? "Starting..." : "Run"}
           </Button>
         </div>
       </div>
