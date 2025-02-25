@@ -6,6 +6,7 @@ import { SSEProvider } from '../contexts/SSEContext';
 import { NavigationProvider } from '../contexts/NavigationContext';
 import { ProcessingStackProvider } from '../contexts/ProcessingStackContext';
 import { TradeProvider } from '../contexts/TradeContext';
+import { PositionsProvider } from '../contexts/PositionsContext';
 
 interface AppProvidersProps {
   children: ReactNode;
@@ -36,11 +37,13 @@ export function AppProviders({ children }: AppProvidersProps) {
         <ThemeProvider>
         <ThemeConfigProvider>
           <NavigationProvider>
-            <ProcessingStackProvider>
-              <TradeProvider>
-                {children}
-              </TradeProvider>
-            </ProcessingStackProvider>
+            <PositionsProvider>
+              <ProcessingStackProvider>
+                <TradeProvider>
+                  {children}
+                </TradeProvider>
+              </ProcessingStackProvider>
+            </PositionsProvider>
           </NavigationProvider>
         </ThemeConfigProvider>
         </ThemeProvider>

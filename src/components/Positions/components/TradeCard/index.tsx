@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Card, Typography, Tag, Tooltip, Space, Button } from 'antd';
 import {
   ClockCircleOutlined,
@@ -30,7 +30,43 @@ const formatProfit = (profit: number) => {
   }).format(profit);
 };
 
-const TradeCard: React.FC<TradeCardProps> = ({ trade, loading, onClose }) => {
+const TradeCard: React.FC<TradeCardProps> = ({ trade, loading, onClose, lastUpdated }) => {
+  const [highlight, setHighlight] = useState(false);
+  const prevProfitRef = useRef(trade.total_profit);
+  const prevContractsRef = useRef(trade.contracts.map(c => c.profit));
+  
+  // Add animation when profit changes
+  useEffect(() => {
+    if (lastUpdated) {
+      // Check if total profit changed
+      if (prevProfitRef.current !== trade.total_profit) {
+        setHighlight(true);
+        const timer = setTimeout(() => {
+          setHighlight(false);
+        }, 2000);
+        
+        prevProfitRef.current = trade.total_profit;
+        return () => clearTimeout(timer);
+      }
+      
+      // Check if any contract profits changed
+      const contractsChanged = trade.contracts.some((contract, index) => {
+        return index >= prevContractsRef.current.length ||
+               contract.profit !== prevContractsRef.current[index];
+      });
+      
+      if (contractsChanged) {
+        setHighlight(true);
+        const timer = setTimeout(() => {
+          setHighlight(false);
+        }, 2000);
+        
+        prevContractsRef.current = trade.contracts.map(c => c.profit);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [trade, lastUpdated]);
+  
   const isProfit = trade.total_profit > 0;
   const profitClass = isProfit ? 'profit' : 'loss';
 
@@ -62,7 +98,7 @@ const TradeCard: React.FC<TradeCardProps> = ({ trade, loading, onClose }) => {
 
   return (
     <Card
-      className={`trade-card ${profitClass}`}
+      className={`trade-card ${profitClass} ${highlight ? 'updated' : ''}`}
       loading={loading}
       hoverable
     >

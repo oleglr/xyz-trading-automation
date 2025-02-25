@@ -12,7 +12,7 @@ interface UseSSEOptions<T> {
   withCredentials?: boolean;
 }
 
-export function useSSE<T extends SSEMessage<unknown>>(
+export function useSSE<T = any>(
   options: UseSSEOptions<T>
 ) {
   const [isConnected, setIsConnected] = useState(false);
@@ -29,7 +29,7 @@ export function useSSE<T extends SSEMessage<unknown>>(
   const handleMessage = useCallback((event: MessageEvent) => {
     if (onMessage) {
       try {
-        const data = JSON.parse(event.data) as T;
+        const data = JSON.parse(event.data);
         onMessage(data);
       } catch (error) {
         console.error('Failed to parse SSE message:', error);
@@ -69,7 +69,7 @@ export function useSSE<T extends SSEMessage<unknown>>(
     const checkConnection = setInterval(() => {
       const connected = sseService.isConnected();
       setIsConnected(connected);
-    }, 100);
+    }, 1000);
 
     return () => {
       clearInterval(checkConnection);
