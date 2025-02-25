@@ -27,7 +27,7 @@ const Positions: React.FC = () => {
 
   const fetchTrades = useCallback(async () => {
     try {
-      const response = await tradeService.checkTradeStatus('*');
+      const response = await tradeService.checkTradeStatus();
       if (response && Array.isArray(response.tradeinfo_list)) {
         setTrades(response.tradeinfo_list);
         setError(null);

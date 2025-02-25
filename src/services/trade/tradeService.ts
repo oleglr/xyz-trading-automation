@@ -72,7 +72,7 @@ class TradeService {
    * @returns Promise with the trade status
    * @throws TradeError if the request fails
    */
-  public async checkTradeStatus(symbol: string): Promise<TradeStatus> {
+  public async checkTradeStatus(): Promise<TradeStatus> {
     const headers = {
       'loginid': import.meta.env.VITE_Login_Id,
       'authorize': import.meta.env.VITE_Authorize,
