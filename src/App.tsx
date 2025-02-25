@@ -1,15 +1,15 @@
-import { useEffect } from "react";
-import { Layout, Row, Col } from "antd";
+import { useEffect, useState } from "react";
+import { Layout } from "antd";
 import { oauthService } from "./services/oauth/oauthService";
 import { useWebSocket } from "./hooks/useWebSocket";
 import { useAuth } from "./contexts/AuthContext";
 import { useNavigation } from "./contexts/NavigationContext";
 import { AuthorizeResponse } from "./types/auth";
 import { StrategyList } from "./components/StrategyList";
-import { Header } from "./components/Header";
 import { Navigation } from "./components/Navigation";
 import { Settings } from "./components/Settings";
 import Positions from "./components/Positions";
+import { AccountHeader } from "./components/AccountHeader";
 
 import "./styles/App.scss";
 
@@ -20,13 +20,13 @@ function MainContent() {
 
   const renderContent = () => {
     switch (activeTab) {
-      case "strategies":
+      case "discover":
         return <StrategyList />;
-      case "trade-logs":
+      case "bots":
+        return <div>Bots (Coming Soon)</div>;
+      case "positions":
         return <Positions />;
-      case "templates":
-        return <div>Templates (Coming Soon)</div>;
-      case "settings":
+      case "menu":
         return <Settings />;
       default:
         return <StrategyList />;
@@ -34,20 +34,19 @@ function MainContent() {
   };
 
   return (
-    <Row gutter={[16, 16]}>
-      <Col xs={24} sm={24} md={6} lg={5} xl={4}>
-        <Navigation />
-      </Col>
-      <Col xs={24} md={18} lg={19} xl={20}>
-        {renderContent()}
-      </Col>
-    </Row>
+    <div className="app-content">
+      {renderContent()}
+      <Navigation />
+    </div>
   );
 }
 
 function App() {
   const { authParams, setAuthParams, authorizeResponse, setAuthorizeResponse } =
     useAuth();
+  const [accountType, setAccountType] = useState<'Real' | 'Demo'>('Real');
+  const balance = '10,000.00';
+  const currency = 'USD';
 
   const { send, isConnected, connect } = useWebSocket<AuthorizeResponse>({
     onMessage: (response) => {
@@ -80,27 +79,26 @@ function App() {
     }
   }, [authParams, isConnected, send]);
 
-  const handleLogin = () => {
-    setAuthParams(null);
-    setAuthorizeResponse(null);
-    oauthService.initiateLogin();
+  const handleAccountTypeChange = (type: 'Real' | 'Demo') => {
+    setAccountType(type);
+    // In a real app, you would fetch the balance for the selected account type
   };
-
-  const handleLogout = () => {
-    setAuthParams(null);
-    setAuthorizeResponse(null);
+  
+  const handleDepositClick = () => {
+    // Handle deposit action
+    console.log('Deposit clicked');
   };
-
-  const isLoggedIn = !!authorizeResponse?.authorize;
 
   return (
     <Layout className="app-layout">
-      <Header
-        isLoggedIn={isLoggedIn}
-        onLogin={handleLogin}
-        onLogout={handleLogout}
-      />
       <Content className="app-main">
+        <AccountHeader 
+          accountType={accountType}
+          balance={balance}
+          currency={currency}
+          onAccountTypeChange={handleAccountTypeChange}
+          onDepositClick={handleDepositClick}
+        />
         <MainContent />
       </Content>
     </Layout>
