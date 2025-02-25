@@ -13,12 +13,44 @@
       flex-direction: column;
       align-items: stretch;
     }
-
+  }
+  
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
     h1 {
       margin: 0;
       color: var(--text-primary);
       font-size: 24px;
       font-weight: 600;
+    }
+  }
+  
+  &__live-indicator {
+    .ant-badge-status-dot {
+      background-color: #52c41a;
+      box-shadow: 0 0 0 2px rgba(82, 196, 26, 0.2);
+      animation: pulse 1.5s infinite;
+    }
+    
+    .ant-badge-status-text {
+      color: #52c41a;
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+  
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(82, 196, 26, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 6px rgba(82, 196, 26, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(82, 196, 26, 0);
     }
   }
 

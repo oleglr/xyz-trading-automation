@@ -47,7 +47,7 @@ export function StrategyForm({
       console.log("Trade submitted with session ID:", sessionId);
 
       // Add to processing stack
-      /* addProcess({
+      addProcess({
         sessionId,
         symbol: values.asset as string,
         strategy: strategyType,
@@ -68,7 +68,7 @@ export function StrategyForm({
       });
 
       // Call the provided onSubmit handler if needed
-      await onSubmit?.(values); */
+      // await onSubmit?.(values);
 
     } catch (error) {
       console.error("Failed to start trading session:", error);

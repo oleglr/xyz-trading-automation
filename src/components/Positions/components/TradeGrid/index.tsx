@@ -6,7 +6,7 @@ import './styles.scss';
 
 const LOADING_CARDS = 8;
 
-const TradeGrid: React.FC<TradeGridProps> = ({ trades, loading, onClose }) => {
+const TradeGrid: React.FC<TradeGridProps> = ({ trades, loading, onClose, lastUpdated }) => {
   if (loading) {
     return (
       <div className="trade-grid">
@@ -24,6 +24,7 @@ const TradeGrid: React.FC<TradeGridProps> = ({ trades, loading, onClose }) => {
           key={trade.session_id}
           trade={trade}
           onClose={onClose}
+          lastUpdated={lastUpdated?.[trade.session_id]}
         />
       ))}
     </div>
