@@ -1,17 +1,4 @@
-interface WebSocketResponse {
-  req_id?: number;
-  msg_type: string;
-  error?: {
-    code: string;
-    message: string;
-  };
-  [key: string]: unknown;
-}
-
-interface WebSocketRequest {
-  req_id?: number;
-  [key: string]: unknown;
-}
+import { WebSocketResponse, WebSocketRequest } from '../../types/websocket';
 
 type MessageHandler = (data: WebSocketResponse) => void;
 

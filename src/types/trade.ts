@@ -1,24 +1,34 @@
+import { FormValues } from "./form";
+
 // Trade request types
-export interface RepeatTradeRequest {
-  number_of_trades: number;
-  proposal: number;
-  amount: number;
+export interface CommonTradeParams extends FormValues {
+  proposal: 1;
   basis: 'stake' | 'payout';
-  contract_type: string;
-  currency: string;
+  contract_type?: ContractType,
+  currency?: string,
+  amount: number;
   symbol: string;
   growth_rate: number;
+}
+
+export interface RepeatTradeRequest extends CommonTradeParams {
+  number_of_trades: number;
   limit_order?: {
     take_profit: number;
   };
 }
 
-// Trade response types
-export interface RepeatTradeResponse {
-  session_id: string;
-  status: string;
-  symbol: string;
-  trades: number;
+export interface ThresholdTradeRequest extends CommonTradeParams {
+  duration: number;
+  profit_threshold: number;
+  loss_threshold: number;
+}
+
+export interface MartingaleTradeRequest extends CommonTradeParams {
+  multiplier: number;
+  max_steps: number;
+  profit_threshold: number;
+  loss_threshold: number;
 }
 
 // Trade status types
@@ -51,17 +61,6 @@ export interface TradeStatus {
 // Error types
 export interface TradeError {
   error: string;
-}
-
-// Trade form types
-export interface RepeatTradeFormValues {
-  trade_type: string;
-  strategy: string;
-  asset: string;
-  initial_stake: number;
-  growth_rate: number;
-  profit_threshold: number;
-  loss_threshold: number;
 }
 
 // Trade status enums

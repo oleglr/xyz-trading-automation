@@ -5,6 +5,7 @@ import { AuthProvider } from '../contexts/AuthContext';
 import { SSEProvider } from '../contexts/SSEContext';
 import { NavigationProvider } from '../contexts/NavigationContext';
 import { ProcessingStackProvider } from '../contexts/ProcessingStackContext';
+import { TradeProvider } from '../contexts/TradeContext';
 
 interface AppProvidersProps {
   children: ReactNode;
@@ -36,7 +37,9 @@ export function AppProviders({ children }: AppProvidersProps) {
         <ThemeConfigProvider>
           <NavigationProvider>
             <ProcessingStackProvider>
-              {children}
+              <TradeProvider>
+                {children}
+              </TradeProvider>
             </ProcessingStackProvider>
           </NavigationProvider>
         </ThemeConfigProvider>

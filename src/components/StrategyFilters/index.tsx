@@ -3,21 +3,7 @@ import { Button, Input, Modal } from "antd";
 import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
 import "./styles.scss";
 
-interface StrategyFiltersProps {
-  selectedFilter: string;
-  onFilterChange: (filter: string) => void;
-  searchText: string;
-  onSearchChange: (text: string) => void;
-}
-
-const filterButtons = [
-  { key: "all", label: "All Strategies" },
-  { key: "long-calls", label: "Long Calls" },
-  { key: "short-puts", label: "Short Puts" },
-  { key: "iron-condors", label: "Iron Condors" },
-  { key: "covered-calls", label: "Covered Calls" },
-  { key: "bull-spreads", label: "Bull Spreads" },
-] as const;
+import { StrategyFiltersProps, filterButtons } from "../../types/strategy";
 
 export function StrategyFilters({
   selectedFilter,
