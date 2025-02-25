@@ -20,9 +20,10 @@ A modern, high-performance trading automation platform built with React, TypeScr
 ### Technical Features
 - Real-time WebSocket data streaming
 - Server-Sent Events (SSE) for updates
-- OAuth2 authentication
+- OAuth2 authentication with centralized state management
 - Responsive design for all devices
 - Dark/Light theme support
+- Singleton-based auth store for consistent authentication state
 
 ## 🛠 Technology Stack
 
@@ -31,7 +32,10 @@ A modern, high-performance trading automation platform built with React, TypeScr
 - **Build Tool**: Vite
 - **UI Framework**: Ant Design
 - **Styling**: SCSS Modules + CSS Variables
-- **State Management**: React Context + Custom Hooks
+- **State Management**: 
+  - React Context for component-level state
+  - Singleton stores for global state (e.g., AuthStore)
+  - Custom hooks for reusable logic
 - **Real-time Data**: WebSocket + SSE Integration
 
 ### Development Tools
@@ -62,6 +66,7 @@ champion-automation/
 │   │   ├── oauth/         # Authentication services
 │   │   ├── sse/           # Server-Sent Events
 │   │   └── websocket/     # WebSocket services
+│   ├── stores/            # Singleton stores for global state
 │   ├── styles/            # Global styles and themes
 │   ├── types/             # TypeScript type definitions
 │   └── utils/             # Utility functions
@@ -97,21 +102,15 @@ cp .env.example .env
 Edit `.env` with your configuration:
 ```env
 # API Configuration
-VITE_API_URL=https://api.example.com
-VITE_API_VERSION=v1
+VITE_OAUTH_APP_ID=your_app_id
+VITE_OAUTH_URL=https://your-oauth-server.com/oauth2/authorize
+VITE_PLATFORM_NAME=champion-automation
+VITE_BRAND_NAME=your_brand
 
 # WebSocket Configuration
-VITE_WS_URL=wss://ws.example.com
-VITE_WS_RECONNECT_INTERVAL=5000
-
-# Authentication
-VITE_AUTH_URL=https://auth.example.com
-VITE_CLIENT_ID=your_client_id
-VITE_REDIRECT_URI=http://localhost:5173/callback
-
-# Feature Flags
-VITE_ENABLE_TRADE_LOGS=true
-VITE_ENABLE_SAVE_STRATEGIES=true
+VITE_WS_URL=wss://your-ws-server.com/websockets/v3
+VITE_Auth_Url=https://your-auth-server.com/websockets/authorize
+VITE_Deriv_Url=wss://your-deriv-server.com/websockets/v3
 ```
 
 4. Start development server:
@@ -131,6 +130,18 @@ npm run build
 - Use functional components with hooks
 - Implement proper error handling
 - Write meaningful comments and documentation
+
+### Authentication Architecture
+The application uses a centralized authentication system with three main components:
+1. **AuthContext**: React Context for component-level auth state management
+2. **AuthStore**: Singleton store for global auth state, accessible by services
+3. **Local Storage**: Persistent storage for auth data
+
+Key auth data is stored in:
+- `app_auth`: Contains authorize response (loginId, token, userId)
+- `app_params`: Contains OAuth parameters
+
+Services access auth data through AuthStore instead of directly accessing environment variables or localStorage.
 
 ### Component Structure
 ```typescript
@@ -196,4 +207,3 @@ Additional documentation:
 3. Commit your changes
 4. Push to the branch
 5. Open a pull request
-
