@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosError, AxiosResponse, RawAxiosRequestHeaders } from 'axios';
 import { API_CONFIG } from '../../config/api.config';
+import { authStore } from '../../stores/authStore';
 
 class ApiService {
   private static instance: ApiService;
@@ -13,10 +14,7 @@ class ApiService {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'authorize': import.meta.env.VITE_Authorize,
-        'loginid': import.meta.env.VITE_Login_Id,
-        'deriv-url': import.meta.env.VITE_Deriv_Url,
-        'auth-url': import.meta.env.VITE_Auth_Url,
+        ...authStore.getHeaders()
       },
     });
 
@@ -73,17 +71,9 @@ class ApiService {
   }
 
   private mergeHeaders(customHeaders?: RawAxiosRequestHeaders): RawAxiosRequestHeaders {
-    // Ensure environment variables are always included
-    const envHeaders = {
-      'authorize': import.meta.env.VITE_Authorize,
-      'loginid': import.meta.env.VITE_Login_Id,
-      'deriv-url': import.meta.env.VITE_Deriv_Url,
-      'auth-url': import.meta.env.VITE_Auth_Url,
-    };
-
     return {
       ...this.api.defaults.headers.common,
-      ...envHeaders,
+      ...authStore.getHeaders(),
       ...customHeaders,
     };
   }

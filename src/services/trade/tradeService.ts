@@ -4,6 +4,7 @@ import {
   TradeStatus,
   TradeStrategy
 } from '../../types/trade';
+import { authStore } from '../../stores/authStore';
 
 class TradeService {
   private static instance: TradeService;
@@ -29,13 +30,7 @@ class TradeService {
     request: TRequest,
     strategy: TradeStrategy
   ): Promise<TResponse> {
-    const headers = {
-      'authorize': import.meta.env.VITE_Authorize,
-      'loginid': import.meta.env.VITE_Login_Id,
-      'deriv-url': import.meta.env.VITE_Deriv_Url,
-      'auth-url': import.meta.env.VITE_Auth_Url,
-      'userid': import.meta.env.VITE_User_Id,
-    };
+    const headers = authStore.getHeaders();
 
     // Get the appropriate endpoint based on the strategy
     const endpoint = this.getStrategyEndpoint(strategy);
@@ -68,22 +63,16 @@ class TradeService {
   }
 
   /**
-   * Checks the status of a trading session
-   * @param symbol The trading symbol to check
+   * Checks the status of all trading sessions
    * @returns Promise with the trade status
    * @throws TradeError if the request fails
    */
   public async checkTradeStatus(): Promise<TradeStatus> {
-    const headers = {
-      'loginid': import.meta.env.VITE_Login_Id,
-      'authorize': import.meta.env.VITE_Authorize,
-      'auth-url': import.meta.env.VITE_Auth_Url,
-    };
+    const headers = authStore.getHeaders();
 
     return await this.retryOperation(() =>
       apiService.get<TradeStatus>(
-        // `${API_ENDPOINTS.IS_TRADING}/${symbol}`,
-        `${API_ENDPOINTS.IS_TRADING}`,
+        API_ENDPOINTS.IS_TRADING,
         undefined,
         headers
       )
@@ -97,12 +86,7 @@ class TradeService {
    * @throws TradeError if the request fails
    */
   public async stopTrading(symbol: string): Promise<void> {
-    const headers = {
-      'loginid': import.meta.env.VITE_Login_Id,
-      'authorize': import.meta.env.VITE_Authorize,
-      'deriv-url': import.meta.env.VITE_Deriv_Url,
-      'auth-url': import.meta.env.VITE_Auth_Url,
-    };
+    const headers = authStore.getHeaders();
 
     await this.retryOperation(() =>
       apiService.post<void>(
