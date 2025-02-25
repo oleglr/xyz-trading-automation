@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useEffect, useCallback, useReducer } from 'react';
 import { TradeInfo } from '../types/trade';
 import { tradeService } from '../services/trade/tradeService';
-import { useAuth } from './AuthContext';
 import { useSSEContext } from './SSEContext';
-import { TradeUpdateMessage } from '../types/sse';
 
 // Define the context state and actions
 interface PositionsState {

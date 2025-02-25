@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useState } from 'react';
 import { sseService } from '../services/sse/sseService';
-import { SSEMessage, SSEHeaders } from '../types/sse';
+import { SSEHeaders } from '../types/sse';
 
 interface UseSSEOptions<T> {
   url: string;

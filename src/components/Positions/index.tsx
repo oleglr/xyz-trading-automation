@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Alert, Spin, Typography, Badge } from 'antd';
+import { Alert, Spin, Typography } from 'antd';
 import { SwapOutlined } from '@ant-design/icons';
 import { PositionsFilters } from '../../types/positions';
 import { usePositions } from '../../contexts/PositionsContext';
@@ -17,7 +17,7 @@ const DEFAULT_FILTERS: PositionsFilters = {
 };
 
 const Positions: React.FC = () => {
-  const { state, closePosition, isConnected, fetchTrades } = usePositions();
+  const { state, closePosition, fetchTrades } = usePositions();
   const [filters, setFilters] = useState<PositionsFilters>(DEFAULT_FILTERS);
   const hasFetched = useRef(false);
 
