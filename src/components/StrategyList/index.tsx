@@ -1,36 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PageTitle } from '../PageTitle';
 import { StrategyCard } from '../StrategyCard';
+import { StrategyDrawer } from '../StrategyDrawer';
+import { Strategy } from '../../types/strategy';
 import './styles.scss';
 
 // Sample strategy data - in a real app, this would come from an API or context
-const strategies = [
+const strategies: Strategy[] = [
   {
-    id: 'repeat',
+    id: 'repeat-trade',
     title: 'Repeat',
     description: 'Automate and run multiple trades for each instrument.'
   },
   {
-    id: 'martingale',
+    id: 'martingale-trade',
     title: 'Martingale',
     description: 'Increase stake after each loss to recoup prior losses with a single successful trade.'
   },
   {
-    id: 'dalembert',
+    id: 'threshold-trade',
     title: 'D\'Alembert',
     description: 'Increase stake after a losing trade and reduce it after a successful trade by a predetermined number of units.'
   },
   {
-    id: '1-3-2-6',
+    id: 'repeat-trade', // Using repeat-trade as a fallback since there's no 1-3-2-6 in STRATEGY_PARAMS
     title: '1-3-2-6',
     description: 'Maximizes profits through four consecutive wins, adjusting stakes from 1 to 3, 2, and 6 units, resetting after a loss or cycle completion.'
   }
 ];
 
 export function StrategyList() {
+  const [selectedStrategy, setSelectedStrategy] = useState<Strategy | null>(null);
+  
   const handleStrategyClick = (strategyId: string) => {
-    // Handle strategy selection
-    console.log(`Strategy selected: ${strategyId}`);
+    const strategy = strategies.find(s => s.id === strategyId);
+    if (strategy) {
+      setSelectedStrategy(strategy);
+    }
+  };
+  
+  const handleCloseDrawer = () => {
+    setSelectedStrategy(null);
   };
   
   return (
@@ -50,6 +60,11 @@ export function StrategyList() {
           />
         ))}
       </div>
+      
+      <StrategyDrawer 
+        strategy={selectedStrategy} 
+        onClose={handleCloseDrawer} 
+      />
     </div>
   );
 }
