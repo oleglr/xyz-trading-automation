@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { AuthorizeResponse } from '../types/auth';
+import { authStore } from '../stores/authStore';
 
 interface AuthContextType {
   authParams: Record<string, string> | null;
@@ -49,12 +50,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const setAuthParams = (params: Record<string, string> | null) => {
     setAuthParamsState(params);
     setStoredValue(STORAGE_KEYS.APP_PARAMS, params);
+    authStore.setAuthParams(params);
   };
 
   const setAuthorizeResponse = (response: AuthorizeResponse | null) => {
     setAuthorizeResponseState(response);
     setStoredValue(STORAGE_KEYS.APP_AUTH, response);
+    authStore.setAuthorizeResponse(response);
   };
+
+  // Initialize authStore with stored data on mount
+  useEffect(() => {
+    const storedAuth = getStoredValue<AuthorizeResponse>(STORAGE_KEYS.APP_AUTH);
+    const storedParams = getStoredValue<Record<string, string>>(STORAGE_KEYS.APP_PARAMS);
+    
+    if (storedAuth) {
+      authStore.setAuthorizeResponse(storedAuth);
+    }
+    if (storedParams) {
+      authStore.setAuthParams(storedParams);
+    }
+  }, []);
 
   // Clear storage on auth error
   useEffect(() => {

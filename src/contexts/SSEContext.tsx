@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, useRef, ReactNode } from 'react';
 import { sseService } from '../services/sse/sseService';
 import { SSEMessage } from '../types/sse';
+import { useAuth } from './AuthContext';
 
 interface SSEContextType {
   isConnected: boolean;
@@ -18,10 +19,12 @@ export function SSEProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const connectionRef = useRef<boolean>(false);
 
+  const { authorizeResponse, authParams } = useAuth();
+
   useEffect(() => {
     const canConnect = !connectionRef.current && 
-      import.meta.env.VITE_Login_Id && 
-      import.meta.env.VITE_Authorize && 
+      authorizeResponse?.authorize.loginid && 
+      authParams?.token1 && 
       import.meta.env.VITE_Auth_Url;
 
     if (!canConnect) {
@@ -34,8 +37,8 @@ export function SSEProvider({ children }: { children: ReactNode }) {
     const handlers = sseService.connect({
       url: '/api/v2/sse',
       headers: {
-        loginid: import.meta.env.VITE_Login_Id,
-        authorize: import.meta.env.VITE_Authorize,
+        loginid: String(authorizeResponse.authorize.loginid || ''),
+        authorize: String(authParams?.token1 || ''),
         'auth-url': import.meta.env.VITE_Auth_Url,
         'Connection': 'keep-alive'
       },
@@ -86,7 +89,7 @@ export function SSEProvider({ children }: { children: ReactNode }) {
         console.log('SSE Context: Cleanup complete');
       }
     };
-  }, []); // Empty dependency array since we're using ref
+  }, [authorizeResponse]); // Add authorizeResponse as dependency
 
   const value = {
     isConnected,
