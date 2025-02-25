@@ -81,7 +81,8 @@ class TradeService {
 
     return await this.retryOperation(() =>
       apiService.get<TradeStatus>(
-        `${API_ENDPOINTS.IS_TRADING}/${symbol}`,
+        // `${API_ENDPOINTS.IS_TRADING}/${symbol}`,
+        `${API_ENDPOINTS.IS_TRADING}`,
         undefined,
         headers
       )

@@ -13,7 +13,7 @@ A modern, high-performance trading automation platform built with React, TypeScr
 
 ### Trading Tools
 - **Repeat Trade**: Automated trade repetition with customizable parameters
-- **Trade Logs**: Comprehensive trading history and analytics
+- **Positions**: Comprehensive trading history and analytics
 - **Save Strategies**: Store and manage multiple trading configurations
 - **Profile Management**: User preferences and settings
 
