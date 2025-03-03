@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Layout } from "antd";
 import { oauthService } from "./services/oauth/oauthService";
 import { useWebSocket } from "./hooks/useWebSocket";
@@ -43,9 +43,8 @@ function MainContent() {
 }
 
 function App() {
-  const { authParams, setAuthParams, authorizeResponse, setAuthorizeResponse } =
-    useAuth();
-  const [accountType, setAccountType] = useState<'Real' | 'Demo'>('Real');
+  const { authParams, setAuthParams, setAuthorizeResponse } = useAuth();
+  const accountType = 'Real';
   const balance = '10,000.00';
   const currency = 'USD';
 
@@ -79,11 +78,6 @@ function App() {
       send({ authorize: authParams.token1 });
     }
   }, [authParams, isConnected, send]);
-
-  const handleAccountTypeChange = (type: 'Real' | 'Demo') => {
-    setAccountType(type);
-    // In a real app, you would fetch the balance for the selected account type
-  };
   
   const handleDepositClick = () => {
     // Handle deposit action
@@ -97,7 +91,6 @@ function App() {
           accountType={accountType}
           balance={balance}
           currency={currency}
-          onAccountTypeChange={handleAccountTypeChange}
           onDepositClick={handleDepositClick}
         />
         <MainContent />

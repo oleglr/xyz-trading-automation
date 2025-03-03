@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import React, { useState, useRef, useEffect } from 'react';
+import { SearchOutlined, PlusOutlined, CloseOutlined } from '@ant-design/icons';
+import { Button, Input } from 'antd';
 import { PageTitle } from '../PageTitle';
 import { BotCard } from './components/BotCard/index';
 import './styles.scss';
@@ -83,7 +83,10 @@ const mockBots = [
 ];
 
 export function Bots() {
-  const [bots] = useState(mockBots);
+  const [bots, setBots] = useState(mockBots);
+  const [searchVisible, setSearchVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef<any>(null);
 
   const handleRunBot = (botId: string) => {
     console.log(`Running bot ${botId}`);
@@ -96,14 +99,61 @@ export function Bots() {
   };
 
   const handleSearchBot = () => {
-    console.log('Search bots');
-    // Implement search functionality here
+    setSearchVisible(true);
+    // Focus the search input after it becomes visible
+    setTimeout(() => {
+      searchInputRef.current?.focus();
+    }, 100);
+  };
+
+  const handleCloseSearch = () => {
+    setSearchVisible(false);
+    setSearchQuery('');
+    setBots(mockBots); // Reset to original bots
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    
+    if (query.trim() === '') {
+      setBots(mockBots);
+      return;
+    }
+    
+    // Filter bots based on search query
+    const filteredBots = mockBots.filter(bot => 
+      bot.name.toLowerCase().includes(query.toLowerCase()) ||
+      bot.market.toLowerCase().includes(query.toLowerCase()) ||
+      bot.strategy.toLowerCase().includes(query.toLowerCase())
+    );
+    
+    setBots(filteredBots);
   };
 
   const handleMoreOptions = (botId: string) => {
     console.log(`More options for bot ${botId}`);
     // Implement more options logic here
   };
+  
+  // Close search when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        searchVisible &&
+        searchInputRef.current &&
+        !searchInputRef.current.input.contains(event.target as Node) &&
+        !(event.target as Element).closest('.search-close-btn')
+      ) {
+        handleCloseSearch();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [searchVisible]);
 
   return (
     <div className="bots-container">
@@ -126,16 +176,40 @@ export function Bots() {
           />
         </div>
       </div>
+      
+      {searchVisible && (
+        <div className="search-overlay">
+          <div className="search-container">
+            <Input
+              ref={searchInputRef}
+              placeholder="Search bots..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="search-input"
+              suffix={
+                <CloseOutlined 
+                  className="search-close-btn" 
+                  onClick={handleCloseSearch} 
+                />
+              }
+            />
+          </div>
+        </div>
+      )}
 
       <div className="bots-list">
-        {bots.map(bot => (
-          <BotCard
-            key={bot.id}
-            bot={bot}
-            onRun={() => handleRunBot(bot.id)}
-            onMoreOptions={() => handleMoreOptions(bot.id)}
-          />
-        ))}
+        {bots.length > 0 ? (
+          bots.map(bot => (
+            <BotCard
+              key={bot.id}
+              bot={bot}
+              onRun={() => handleRunBot(bot.id)}
+              onMoreOptions={() => handleMoreOptions(bot.id)}
+            />
+          ))
+        ) : (
+          <div className="no-results">No bots found matching your search.</div>
+        )}
       </div>
     </div>
   );
