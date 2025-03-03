@@ -10,6 +10,7 @@ import { Navigation } from "./components/Navigation";
 import { Settings } from "./components/Settings";
 import Positions from "./components/Positions";
 import { AccountHeader } from "./components/AccountHeader";
+import { Bots } from "./components/Bots";
 
 import "./styles/App.scss";
 
@@ -23,7 +24,7 @@ function MainContent() {
       case "discover":
         return <StrategyList />;
       case "bots":
-        return <div>Bots (Coming Soon)</div>;
+        return <Bots />;
       case "positions":
         return <Positions />;
       case "menu":

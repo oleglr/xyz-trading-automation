@@ -21,11 +21,6 @@ const strategies: Strategy[] = [
     id: 'threshold-trade',
     title: 'D\'Alembert',
     description: 'Increase stake after a losing trade and reduce it after a successful trade by a predetermined number of units.'
-  },
-  {
-    id: 'repeat-trade', // Using repeat-trade as a fallback since there's no 1-3-2-6 in STRATEGY_PARAMS
-    title: '1-3-2-6',
-    description: 'Maximizes profits through four consecutive wins, adjusting stakes from 1 to 3, 2, and 6 units, resetting after a loss or cycle completion.'
   }
 ];
 
