@@ -146,11 +146,8 @@ export function StrategyForm({
 
       {/* Market Selector */}
       <BottomActionSheet
-        title="Select Market"
         isOpen={showMarketSelector}
         onClose={() => setShowMarketSelector(false)}
-        height={300}
-        zIndex={1250}
         className="market-selector-drawer"
       >
         <div className="market-selector-list">

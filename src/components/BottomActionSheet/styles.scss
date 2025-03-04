@@ -1,43 +1,56 @@
 .bottom-action-sheet {
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  overflow: hidden;
+
   .ant-drawer-body {
-    padding: 16px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
   }
-  
+
+  .bottom-action-sheet-handle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 0;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    .bottom-action-sheet-handle-bar {
+      width: 40px;
+      height: 4px;
+      background-color: #e0e0e0;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: #d0d0d0;
+      }
+    }
+  }
+
   .bottom-action-sheet-content {
-    max-height: calc(100% - 32px);
+    flex: 1;
+    padding: 0 16px 16px;
     overflow-y: auto;
+    transition: transform 0.2s;
   }
-  
+
   .bottom-action-sheet-footer {
     padding: 16px 24px;
     border-top: 1px solid #f0f0f0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
+
     button {
       min-width: 120px;
     }
-  }
-  
-  // Add a handle at the top of the drawer for better UX
-  .ant-drawer-body::before {
-    content: '';
-    display: block;
-    position: absolute;
-    top: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 4px;
-    background-color: #e0e0e0;
-    border-radius: 4px;
-  }
-  
-  // Ensure the drawer has rounded corners at the top
-  .ant-drawer-content {
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
-    overflow: hidden;
   }
 }

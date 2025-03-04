@@ -1,14 +1,14 @@
 # Bottom Action Sheet Component
 
-A reusable bottom action sheet component built with Ant Design's Drawer component. This component provides a mobile-friendly interface for displaying content that slides up from the bottom of the screen.
+A reusable bottom action sheet component built with Ant Design's Drawer component. This component provides a mobile-friendly interface for displaying content that slides up from the bottom of the screen, with drag-to-dismiss functionality.
 
 ## Features
 
 - Customizable height and z-index
-- Optional title
 - Optional footer with action buttons
 - Rounded corners at the top
-- Handle indicator for better UX
+- Draggable handle for intuitive user interaction
+- Swipe down to dismiss
 - Fully customizable content
 
 ## Usage
@@ -23,6 +23,11 @@ const MyComponent = () => {
 
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
+  
+  // Optional callback when user starts dragging down
+  const handleDragDown = () => {
+    console.log('User is dragging down');
+  };
 
   // Optional footer content
   const footerContent = (
@@ -39,7 +44,7 @@ const MyComponent = () => {
       <BottomActionSheet
         isOpen={isOpen}
         onClose={handleClose}
-        title="Select an Option"
+        onDragDown={handleDragDown}
         height={300}
         footerContent={footerContent}
       >
@@ -47,6 +52,7 @@ const MyComponent = () => {
         <div>
           <p>This is the content of the bottom action sheet.</p>
           <p>You can put any React components here.</p>
+          <p>Try dragging down from the handle to dismiss!</p>
         </div>
       </BottomActionSheet>
     </>
@@ -60,14 +66,19 @@ const MyComponent = () => {
 |------|------|---------|-------------|
 | isOpen | boolean | required | Controls the visibility of the action sheet |
 | onClose | () => void | required | Callback function when the action sheet is closed |
-| title | React.ReactNode | undefined | Title of the action sheet |
 | children | React.ReactNode | required | Content to be displayed in the action sheet |
 | height | number \| string | 300 | Height of the action sheet |
 | zIndex | number | 1050 | z-index of the action sheet |
 | className | string | "" | Additional CSS class for the action sheet |
-| showClose | boolean | true | Whether to show the close icon |
+| showClose | boolean | false | Whether to show the close icon |
 | footerContent | React.ReactNode | undefined | Content to be displayed in the footer |
+| onDragDown | () => void | undefined | Callback function when the user starts dragging down |
 
-## Example
+## Drag Behavior
 
-See the `example.tsx` file for a complete example of how to use the BottomActionSheet component.
+The component includes touch and mouse event handlers to provide a native-feeling drag experience:
+
+- Users can drag the sheet down by touching/clicking the handle at the top
+- If dragged down more than 100px, the sheet will automatically close
+- The sheet smoothly animates back to position if not dragged far enough
+- Works with both touch devices and mouse interactions
