@@ -23,7 +23,7 @@
     }
 
     .bottom-action-sheet-handle-bar {
-      width: 40px;
+      width: 80px;
       height: 4px;
       background-color: #e0e0e0;
       border-radius: 4px;
@@ -32,6 +32,12 @@
       &:hover {
         background-color: #d0d0d0;
       }
+    }
+    
+    &:active .bottom-action-sheet-handle-bar {
+      background-color: #bdbdbd;
+      transform: scale(1.05);
+      transition: background-color 0.1s, transform 0.1s;
     }
   }
 

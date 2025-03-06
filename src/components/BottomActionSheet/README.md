@@ -7,7 +7,7 @@ A reusable bottom action sheet component built with Ant Design's Drawer componen
 - Customizable height and z-index
 - Optional footer with action buttons
 - Rounded corners at the top
-- Draggable handle for intuitive user interaction
+- Draggable handle with visual feedback for intuitive user interaction
 - Swipe down to dismiss
 - Fully customizable content
 
@@ -82,3 +82,4 @@ The component includes touch and mouse event handlers to provide a native-feelin
 - If dragged down more than 100px, the sheet will automatically close
 - The sheet smoothly animates back to position if not dragged far enough
 - Works with both touch devices and mouse interactions
+- Visual feedback when the handle is pressed (changes color and slightly scales up)
