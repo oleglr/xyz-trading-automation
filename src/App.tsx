@@ -17,11 +17,11 @@ const { Content } = Layout;
 function MainContent() {
   const location = useLocation();
   const { setActiveTab } = useNavigation();
-  
+
   // Sync the active tab with the current URL
   useEffect(() => {
-    const tab = pathToTab[location.pathname] || pathToTab['/'];
-    setActiveTab(tab as 'discover' | 'bots' | 'positions' | 'menu');
+    const tab = pathToTab[location.pathname] || pathToTab["/"];
+    setActiveTab(tab as "discover" | "bots" | "positions" | "menu");
   }, [location.pathname, setActiveTab]);
 
   return (
@@ -32,12 +32,12 @@ function MainContent() {
   );
 }
 
-function App() {
+function MainApp() {
   const { authParams, setAuthParams, setAuthorizeResponse } = useAuth();
-  const accountType = 'Real';
-  const balance = '10,000.00';
-  const currency = 'USD';
 
+  const accountType = "Real";
+  const balance = "10,000.00";
+  const currency = "USD";
   const { send, isConnected, connect } = useWebSocket<AuthorizeResponse>({
     onMessage: (response) => {
       if (response.msg_type === "authorize" && response.authorize) {
@@ -68,16 +68,14 @@ function App() {
       send({ authorize: authParams.token1 });
     }
   }, [authParams, isConnected, send]);
-  
   const handleDepositClick = () => {
     // Handle deposit action
-    console.log('Deposit clicked');
+    console.log("Deposit clicked");
   };
-
   return (
     <Layout className="app-layout">
       <Content className="app-main">
-        <AccountHeader 
+        <AccountHeader
           accountType={accountType}
           balance={balance}
           currency={currency}
@@ -89,4 +87,4 @@ function App() {
   );
 }
 
-export default App;
+export default MainApp;

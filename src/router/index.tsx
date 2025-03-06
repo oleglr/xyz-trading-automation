@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouteObject } from 'react-router-dom';
 import App from '../App';
-import { DiscoverPage, BotsPage, PositionsPage, SettingsPage } from '../pages';
+import { DiscoverPage, BotsPage, PositionsPage, SettingsPage, ConfigEndpointPage } from '../pages';
 
 // Define routes
 export const routes: RouteObject[] = [
@@ -29,6 +29,11 @@ export const routes: RouteObject[] = [
         element: <SettingsPage />,
       },
     ],
+  },
+  // Separate route for config endpoint (not part of the main app layout)
+  {
+    path: '/endpoint',
+    element: <ConfigEndpointPage />,
   },
 ];
 
