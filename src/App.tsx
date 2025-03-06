@@ -1,42 +1,32 @@
 import { useEffect } from "react";
 import { Layout } from "antd";
+import { Outlet, useLocation } from "react-router-dom";
 import { oauthService } from "./services/oauth/oauthService";
 import { useWebSocket } from "./hooks/useWebSocket";
 import { useAuth } from "./contexts/AuthContext";
 import { useNavigation } from "./contexts/NavigationContext";
 import { AuthorizeResponse } from "./types/auth";
-import { StrategyList } from "./components/StrategyList";
 import { Navigation } from "./components/Navigation";
-import { Settings } from "./components/Settings";
-import Positions from "./components/Positions";
 import { AccountHeader } from "./components/AccountHeader";
-import { Bots } from "./components/Bots";
+import { pathToTab } from "./router";
 
 import "./styles/App.scss";
 
 const { Content } = Layout;
 
 function MainContent() {
-  const { activeTab } = useNavigation();
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case "discover":
-        return <StrategyList />;
-      case "bots":
-        return <Bots />;
-      case "positions":
-        return <Positions />;
-      case "menu":
-        return <Settings />;
-      default:
-        return <StrategyList />;
-    }
-  };
+  const location = useLocation();
+  const { setActiveTab } = useNavigation();
+  
+  // Sync the active tab with the current URL
+  useEffect(() => {
+    const tab = pathToTab[location.pathname] || pathToTab['/'];
+    setActiveTab(tab as 'discover' | 'bots' | 'positions' | 'menu');
+  }, [location.pathname, setActiveTab]);
 
   return (
     <div className="app-content">
-      {renderContent()}
+      <Outlet />
       <Navigation />
     </div>
   );

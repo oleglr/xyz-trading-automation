@@ -4,50 +4,46 @@ import {
   AreaChartOutlined,
   MenuOutlined 
 } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 import { useNavigation } from '../../contexts/NavigationContext';
-import type { NavigationTab } from '../../contexts/NavigationContext';
 import './styles.scss';
 
 export function Navigation() {
-  const { activeTab, setActiveTab } = useNavigation();
-
-  const handleTabClick = (tab: NavigationTab) => {
-    setActiveTab(tab);
-  };
+  const { activeTab } = useNavigation();
 
   return (
     <div className="app-navigation">
-      <div 
+      <Link 
+        to="/discover"
         className={`app-navigation__item ${activeTab === 'discover' ? 'app-navigation__item--active' : ''}`}
-        onClick={() => handleTabClick('discover')}
       >
         <AppstoreOutlined className="app-navigation__icon" />
         <span className="app-navigation__label">Discover</span>
-      </div>
+      </Link>
       
-      <div 
+      <Link 
+        to="/bots"
         className={`app-navigation__item ${activeTab === 'bots' ? 'app-navigation__item--active' : ''}`}
-        onClick={() => handleTabClick('bots')}
       >
         <RobotOutlined className="app-navigation__icon" />
         <span className="app-navigation__label">Bots</span>
-      </div>
+      </Link>
       
-      <div 
+      <Link 
+        to="/positions"
         className={`app-navigation__item ${activeTab === 'positions' ? 'app-navigation__item--active' : ''}`}
-        onClick={() => handleTabClick('positions')}
       >
         <AreaChartOutlined className="app-navigation__icon" />
         <span className="app-navigation__label">Positions</span>
-      </div>
+      </Link>
       
-      <div 
+      <Link 
+        to="/menu"
         className={`app-navigation__item ${activeTab === 'menu' ? 'app-navigation__item--active' : ''}`}
-        onClick={() => handleTabClick('menu')}
       >
         <MenuOutlined className="app-navigation__icon" />
         <span className="app-navigation__label">Menu</span>
-      </div>
+      </Link>
     </div>
   );
 }
