@@ -11,6 +11,8 @@ import { useState } from "react";
 import { TradeErrorBoundary } from "../ErrorBoundary/TradeErrorBoundary";
 import { TradeStrategy } from "../../types/trade";
 import { useTrade } from "../../contexts/TradeContext";
+import { MarketInfo } from "../../types/market";
+import MarketSelector from "../MarketSelector";
 import "./styles.scss";
 
 import { FormValues, StrategyFormProps } from "../../types/form";
@@ -23,6 +25,7 @@ export function StrategyForm({
   const [form] = Form.useForm<FormValues>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showMarketSelector, setShowMarketSelector] = useState(false);
+  const [selectedMarket, setSelectedMarket] = useState<MarketInfo>();
   const { submitTrade } = useTrade();
 
   const handleSubmit = async (values: FormValues) => {
@@ -149,48 +152,16 @@ export function StrategyForm({
         isOpen={showMarketSelector}
         onClose={() => setShowMarketSelector(false)}
         className="market-selector-drawer"
+        height="80vh"
       >
-        <div className="market-selector-list">
-          <div
-            className="market-selector-item"
-            onClick={() => {
-              form.setFieldsValue({ market: "Volatility 100 (1s) Index" });
-              setShowMarketSelector(false);
-            }}
-          >
-            <div className="market-icon-container">
-              <span className="market-icon-vol">100</span>
-              <span className="market-icon-dot"></span>
-            </div>
-            <span>Volatility 100 (1s) Index</span>
-          </div>
-          <div
-            className="market-selector-item"
-            onClick={() => {
-              form.setFieldsValue({ market: "Volatility 75 (1s) Index" });
-              setShowMarketSelector(false);
-            }}
-          >
-            <div className="market-icon-container">
-              <span className="market-icon-vol">75</span>
-              <span className="market-icon-dot"></span>
-            </div>
-            <span>Volatility 75 (1s) Index</span>
-          </div>
-          <div
-            className="market-selector-item"
-            onClick={() => {
-              form.setFieldsValue({ market: "Volatility 50 (1s) Index" });
-              setShowMarketSelector(false);
-            }}
-          >
-            <div className="market-icon-container">
-              <span className="market-icon-vol">50</span>
-              <span className="market-icon-dot"></span>
-            </div>
-            <span>Volatility 50 (1s) Index</span>
-          </div>
-        </div>
+        <MarketSelector
+          onSelectMarket={(market) => {
+            setSelectedMarket(market);
+            form.setFieldsValue({ market: market.displayName });
+            setShowMarketSelector(false);
+          }}
+          selectedMarket={selectedMarket}
+        />
       </BottomActionSheet>
     </TradeErrorBoundary>
   );
