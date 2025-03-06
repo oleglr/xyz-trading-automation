@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Form, Input, Button, Card, message, Row, Col } from 'antd';
+import { Form, Input, Button, Card, message } from 'antd';
 import { configService } from '../../services/config/configService';
 import './styles.scss';
 
