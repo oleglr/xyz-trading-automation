@@ -6,44 +6,60 @@ import {
 } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { useNavigation } from '../../contexts/NavigationContext';
+import { ReactNode } from 'react';
 import './styles.scss';
+
+// Define navigation item type
+interface NavItem {
+  id: string;
+  path: string;
+  label: string;
+  icon: ReactNode;
+}
 
 export function Navigation() {
   const { activeTab } = useNavigation();
+  
+  // Define navigation items
+  const navItems: NavItem[] = [
+    {
+      id: 'discover',
+      path: '/discover',
+      label: 'Discover',
+      icon: <AppstoreOutlined className="app-navigation__icon" />
+    },
+    {
+      id: 'bots',
+      path: '/bots',
+      label: 'Bots',
+      icon: <RobotOutlined className="app-navigation__icon" />
+    },
+    {
+      id: 'positions',
+      path: '/positions',
+      label: 'Positions',
+      icon: <AreaChartOutlined className="app-navigation__icon" />
+    },
+    {
+      id: 'menu',
+      path: '/menu',
+      label: 'Menu',
+      icon: <MenuOutlined className="app-navigation__icon" />
+    }
+  ];
 
   return (
     <div className="app-navigation">
-      <Link 
-        to="/discover"
-        className={`app-navigation__item ${activeTab === 'discover' ? 'app-navigation__item--active' : ''}`}
-      >
-        <AppstoreOutlined className="app-navigation__icon" />
-        <span className="app-navigation__label">Discover</span>
-      </Link>
-      
-      <Link 
-        to="/bots"
-        className={`app-navigation__item ${activeTab === 'bots' ? 'app-navigation__item--active' : ''}`}
-      >
-        <RobotOutlined className="app-navigation__icon" />
-        <span className="app-navigation__label">Bots</span>
-      </Link>
-      
-      <Link 
-        to="/positions"
-        className={`app-navigation__item ${activeTab === 'positions' ? 'app-navigation__item--active' : ''}`}
-      >
-        <AreaChartOutlined className="app-navigation__icon" />
-        <span className="app-navigation__label">Positions</span>
-      </Link>
-      
-      <Link 
-        to="/menu"
-        className={`app-navigation__item ${activeTab === 'menu' ? 'app-navigation__item--active' : ''}`}
-      >
-        <MenuOutlined className="app-navigation__icon" />
-        <span className="app-navigation__label">Menu</span>
-      </Link>
+      {navItems.map((item) => (
+        <Link 
+          key={item.id}
+          to={item.path}
+          className={`app-navigation__item ${activeTab === item.id ? 'app-navigation__item--active' : ''}`}
+        >
+          {item.icon}
+          <span className="app-navigation__label">{item.label}</span>
+        </Link>
+      ))}
     </div>
   );
 }
