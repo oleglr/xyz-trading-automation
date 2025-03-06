@@ -52,7 +52,7 @@ class AuthStore {
     return {
       'loginid': this.state.authorizeResponse?.authorize.loginid || '',
       'authorize': this.state.authParams?.token1 || '',
-      'userid': this.state.authorizeResponse?.authorize.userId || '',
+      'userid': String(this.state.authorizeResponse?.authorize.userId || ''),
       'auth-url': String(import.meta.env.VITE_Auth_Url || ''),
       'deriv-url': String(import.meta.env.VITE_Deriv_Url || '')
     };

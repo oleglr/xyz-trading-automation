@@ -37,6 +37,30 @@ export function StrategyForm({
 
       console.log("Bot created with session ID:", sessionId);
 
+      /* Add to processing stack
+      addProcess({
+        sessionId,
+        symbol: values.asset as string,
+        strategy: strategyType,
+        status: TradeStatusEnum.PENDING,
+        is_completed: false,
+        tradeInfo: {
+          session_id: sessionId,
+          contracts: [],
+          start_time: new Date().toISOString(),
+          end_time: '',
+          total_profit: 0,
+          win_profit: 0,
+          loss_profit: 0,
+          strategy: strategyType,
+          initial: values.amount as number,
+          ...values
+        }
+      });
+
+      // Call the provided onSubmit handler if needed
+      // await onSubmit?.(values);
+      */
       // Handle successful submission (e.g., redirect or show success message)
     } catch (error) {
       console.error("Failed to create bot:", error);

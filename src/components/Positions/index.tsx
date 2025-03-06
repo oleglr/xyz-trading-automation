@@ -1,9 +1,8 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Alert, Spin, Typography } from 'antd';
 import { SwapOutlined } from '@ant-design/icons';
-import { TradeInfo } from '../../types/trade';
 import { PositionsFilters } from '../../types/positions';
-import { tradeService } from '../../services/trade/tradeService';
+import { usePositions } from '../../contexts/PositionsContext';
 import TradeFilters from './components/TradeFilters';
 import TradeGrid from './components/TradeGrid';
 import './styles.scss';
@@ -18,28 +17,11 @@ const DEFAULT_FILTERS: PositionsFilters = {
 };
 
 const Positions: React.FC = () => {
-  // TODO: Future implementation will use WebSocket connection for real-time updates
-  const hasFetched = useRef(false);
-  const [trades, setTrades] = useState<TradeInfo[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { state, closePosition, fetchTrades } = usePositions();
   const [filters, setFilters] = useState<PositionsFilters>(DEFAULT_FILTERS);
+  const hasFetched = useRef(false);
 
-  const fetchTrades = useCallback(async () => {
-    try {
-      const response = await tradeService.checkTradeStatus();
-      if (response && Array.isArray(response.tradeinfo_list)) {
-        setTrades(response.tradeinfo_list);
-        setError(null);
-      }
-    } catch (err) {
-      setError('Failed to fetch trading positions. Please try again later.');
-      console.error('Error fetching trades:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
+  // Fetch trades when the component mounts, but only once
   useEffect(() => {
     if (!hasFetched.current) {
       fetchTrades();
@@ -52,7 +34,8 @@ const Positions: React.FC = () => {
   };
 
   const getFilteredTrades = () => {
-    let filteredTrades = [...trades];
+    // Convert trades object to array
+    let filteredTrades = Object.values(state.trades);
 
     // Apply strategy filter
     if (filters.strategy) {
@@ -92,19 +75,24 @@ const Positions: React.FC = () => {
   return (
     <div className="positions">
       <div className="positions__header">
-        <Title level={1}>Trading Positions</Title>
+        <div className="positions__title">
+          <Title level={1}>Trading Positions</Title>
+          {/* {isConnected && (
+            <Badge status="processing" text="Live Updates" className="positions__live-indicator" />
+          )} */}
+        </div>
         <TradeFilters
           filters={filters}
           onFiltersChange={handleFiltersChange}
-          loading={loading}
+          loading={state.loading}
         />
       </div>
 
       <div className="positions__content">
-        {error ? (
+        {state.error ? (
           <Alert
             message="Error"
-            description={error}
+            description={state.error}
             type="error"
             showIcon
             className="positions__error"
@@ -113,18 +101,16 @@ const Positions: React.FC = () => {
           <>
             <TradeGrid
               trades={filteredTrades}
-              loading={loading}
-              onClose={(sessionId) => {
-                // TODO: Implement close position when API is ready
-                console.log('Closing position:', sessionId);
-              }}
+              loading={state.loading}
+              onClose={closePosition}
+              lastUpdated={state.lastUpdated}
             />
-            {loading && (
+            {state.loading && (
               <div className="positions__loading">
                 <Spin size="large" />
               </div>
             )}
-            {!loading && filteredTrades.length === 0 && (
+            {!state.loading && filteredTrades.length === 0 && (
               <div className="positions__empty">
                 <SwapOutlined />
                 <Title level={3}>No Active Positions</Title>

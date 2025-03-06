@@ -13,6 +13,22 @@
   &.profit, &.loss {
     border-left: 4px solid var(--accent-color) !important;
   }
+  
+  &.updated {
+    animation: highlight-update 2s ease-in-out;
+  }
+  
+  @keyframes highlight-update {
+    0% {
+      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0);
+    }
+    20% {
+      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.8);
+    }
+    100% {
+      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0);
+    }
+  }
 
   .ant-card-body {
     padding: 20px;
@@ -61,6 +77,30 @@
       }
     }
   }
+  
+  &.profit.updated {
+    .trade-card__profit h3 {
+      animation: highlight-profit 2s ease-in-out;
+    }
+  }
+  
+  &.loss.updated {
+    .trade-card__profit h3 {
+      animation: highlight-loss 2s ease-in-out;
+    }
+  }
+  
+  @keyframes highlight-profit {
+    0% { color: var(--accent-color); }
+    20% { color: #52c41a; }
+    100% { color: var(--accent-color); }
+  }
+  
+  @keyframes highlight-loss {
+    0% { color: var(--accent-color); }
+    20% { color: #f5222d; }
+    100% { color: var(--accent-color); }
+  }
 
   &__details {
     margin-bottom: 16px;
@@ -99,6 +139,7 @@
     background: var(--bg-secondary);
     border-radius: 4px;
     font-size: 13px;
+    transition: background-color 0.3s ease;
 
     .ant-typography {
       margin: 0;
@@ -107,6 +148,18 @@
         color: var(--accent-color);
       }
     }
+  }
+  
+  &.updated {
+    .trade-card__contract {
+      animation: highlight-contract 2s ease-in-out;
+    }
+  }
+  
+  @keyframes highlight-contract {
+    0% { background: var(--bg-secondary); }
+    20% { background: rgba(24, 144, 255, 0.1); }
+    100% { background: var(--bg-secondary); }
   }
 
   // Loading state

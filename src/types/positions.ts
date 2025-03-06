@@ -14,6 +14,7 @@ export interface TradeCardProps {
   trade: TradeInfo;
   loading?: boolean;
   onClose?: (sessionId: string) => void;
+  lastUpdated?: Date;
 }
 
 export interface TradeFiltersProps {
@@ -26,4 +27,5 @@ export interface TradeGridProps {
   trades: TradeInfo[];
   loading?: boolean;
   onClose?: (sessionId: string) => void;
+  lastUpdated?: Record<string, Date>;
 }
