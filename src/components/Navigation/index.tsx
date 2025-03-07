@@ -1,49 +1,65 @@
-import { Menu } from 'antd';
 import { 
   AppstoreOutlined, 
-  HistoryOutlined,
-  SnippetsOutlined,
-  SettingOutlined 
+  RobotOutlined,
+  AreaChartOutlined,
+  MenuOutlined 
 } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 import { useNavigation } from '../../contexts/NavigationContext';
-import type { NavigationTab } from '../../contexts/NavigationContext';
+import { ReactNode } from 'react';
 import './styles.scss';
 
-const menuItems = [
-  {
-    key: 'strategies',
-    icon: <AppstoreOutlined />,
-    label: 'Strategies',
-  },
-  {
-    key: 'trade-logs',
-    icon: <HistoryOutlined />,
-    label: 'Positions',
-  },
-  {
-    key: 'templates',
-    icon: <SnippetsOutlined />,
-    label: 'Templates',
-  },
-  {
-    key: 'settings',
-    icon: <SettingOutlined />,
-    label: 'Settings',
-  }
-];
+// Define navigation item type
+interface NavItem {
+  id: string;
+  path: string;
+  label: string;
+  icon: ReactNode;
+}
 
 export function Navigation() {
-  const { activeTab, setActiveTab } = useNavigation();
+  const { activeTab } = useNavigation();
+  
+  // Define navigation items
+  const navItems: NavItem[] = [
+    {
+      id: 'discover',
+      path: '/discover',
+      label: 'Discover',
+      icon: <AppstoreOutlined className="app-navigation__icon" />
+    },
+    {
+      id: 'bots',
+      path: '/bots',
+      label: 'Bots',
+      icon: <RobotOutlined className="app-navigation__icon" />
+    },
+    {
+      id: 'positions',
+      path: '/positions',
+      label: 'Positions',
+      icon: <AreaChartOutlined className="app-navigation__icon" />
+    },
+    {
+      id: 'menu',
+      path: '/menu',
+      label: 'Menu',
+      icon: <MenuOutlined className="app-navigation__icon" />
+    }
+  ];
 
   return (
     <div className="app-navigation">
-      <Menu
-        mode="inline"
-        selectedKeys={[activeTab]}
-        items={menuItems}
-        className="app-navigation__menu"
-        onClick={({ key }) => setActiveTab(key as NavigationTab)}
-      />
+      {navItems.map((item) => (
+        <Link 
+          key={item.id}
+          to={item.path}
+          className={`app-navigation__item ${activeTab === item.id ? 'app-navigation__item--active' : ''}`}
+        >
+          {item.icon}
+          <span className="app-navigation__label">{item.label}</span>
+        </Link>
+      ))}
     </div>
   );
 }

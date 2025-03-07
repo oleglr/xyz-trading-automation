@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Form, Input, Button, Card, message } from 'antd';
+import { Link } from 'react-router-dom';
 import { configService } from '../../services/config/configService';
 import './styles.scss';
 
@@ -64,7 +65,7 @@ export function ConfigEndpoint() {
       <Card className="config-endpoint__card">
         <div className="config-endpoint__header">
           <h1 className="config-endpoint__title">Authentication Configuration</h1>
-          <a href="/" className="config-endpoint__home-link">Back to Home</a>
+          <Link to="/" className="config-endpoint__home-link">Back to Home</Link>
         </div>
         
         <Form
