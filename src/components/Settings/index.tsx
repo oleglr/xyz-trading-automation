@@ -1,12 +1,25 @@
-import { Card, Divider } from 'antd';
+import { Card, Divider, Button, Switch } from 'antd';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { AuthorizeResponse } from '../../types/websocket';
 import { StrategyUpdates } from '../StrategyUpdates';
+import { oauthService } from '../../services/oauth/oauthService';
 import './styles.scss';
 
 export function Settings() {
-  const { authorizeResponse } = useAuth();
+  const { authorizeResponse, setAuthParams, setAuthorizeResponse } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const userInfo = authorizeResponse as AuthorizeResponse | null;
+  
+  const handleLogin = () => {
+    oauthService.initiateLogin();
+  };
+  
+  const handleLogout = () => {
+    setAuthParams(null);
+    setAuthorizeResponse(null);
+  };
 
   return (
     <div className="settings">
@@ -40,6 +53,55 @@ export function Settings() {
           </>
         )}
 
+        <div className="settings__section">
+          <h3 className="settings__section-title">Authentication</h3>
+          <div className="settings__auth-buttons">
+            {userInfo ? (
+              <Button 
+                type="primary" 
+                danger 
+                onClick={handleLogout}
+                className="settings__auth-button"
+              >
+                Logout
+              </Button>
+            ) : (
+              <Button 
+                type="primary" 
+                onClick={handleLogin}
+                className="settings__auth-button"
+              >
+                Login
+              </Button>
+            )}
+          </div>
+        </div>
+        
+        <Divider />
+        
+        <div className="settings__section">
+          <h3 className="settings__section-title">Appearance</h3>
+          <div className="settings__theme-switch">
+            <span className="settings__theme-label">Dark Mode</span>
+            <Switch 
+              checked={theme === 'dark'}
+              onChange={toggleTheme}
+              className="settings__theme-toggle"
+            />
+          </div>
+        </div>
+        
+        <Divider />
+        
+        <div className="settings__section">
+          <h3 className="settings__section-title">Configuration</h3>
+          <Link to="/endpoint" className="settings__config-link">
+            <Button type="default">API Endpoint Configuration</Button>
+          </Link>
+        </div>
+        
+        <Divider />
+        
         <div className="settings__section">
           <StrategyUpdates />
         </div>

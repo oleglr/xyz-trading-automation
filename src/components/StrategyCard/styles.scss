@@ -3,12 +3,20 @@
   display: flex;
   align-items: center;
   padding: 16px;
-  background-color: #f8f9fa;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
   margin-bottom: 1px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
   border-radius: 0.5rem;
   margin-block: 0.3rem;
+  box-shadow: var(--card-shadow);
+  
+  &:hover {
+    border-color: var(--card-hover-border);
+    box-shadow: var(--card-hover-shadow);
+    transform: translateY(-2px);
+  }
   
   &:active {
     background-color: var(--hover-bg);
@@ -42,7 +50,7 @@
   &__description {
     margin: 0;
     font-size: 12px;
-    color: rgba(0, 0, 0, 0.7); /* Darker text color */
+    color: var(--text-secondary); /* Use theme variable */
     line-height: 1.4;
     width: 90%;
   }
@@ -51,7 +59,7 @@
     position: absolute;
     top: 16px;
     right: 16px;
-    color: rgba(0, 0, 0, 0.7); /* Darker icon color */
+    color: var(--text-secondary); /* Use theme variable */
     font-size: 16px;
   }
   

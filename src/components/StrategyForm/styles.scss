@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #ffffff;
+  background: var(--bg-primary);
   padding-bottom: 80px;
 }
 
@@ -11,18 +11,18 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border-color);
 
   .header-left {
     .back-button {
       padding: 0;
       border: none;
       font-size: 20px;
-      color: #333;
+      color: var(--text-primary);
 
       &:hover {
         background: transparent;
-        color: #000;
+        color: var(--accent-color);
       }
     }
   }
@@ -33,16 +33,16 @@
       width: 36px;
       height: 36px;
       border: none;
-      background-color: #f5f5f5;
+      background-color: var(--hover-bg);
 
       .question-icon {
         font-size: 16px;
         font-weight: 500;
-        color: #666;
+        color: var(--text-secondary);
       }
 
       &:hover {
-        background-color: #e8e8e8;
+        background-color: var(--card-bg);
       }
     }
   }
@@ -53,6 +53,7 @@
   font-weight: 600;
   margin: 16px;
   padding: 0;
+  color: var(--text-primary);
 }
 
 .strategy-form {
@@ -63,7 +64,7 @@
 
     label {
       font-size: 14px;
-      color: #333;
+      color: var(--text-primary);
     }
   }
 
@@ -71,6 +72,7 @@
     font-size: 18px;
     font-weight: 600;
     margin: 16px 0;
+    color: var(--text-primary);
   }
 
   .trade-type-item {
@@ -78,17 +80,18 @@
 
     .ant-segmented {
       padding: 4px;
-      background-color: #f5f5f5;
+      background-color: var(--hover-bg);
       border-radius: 8px;
       width: 100%;
 
       .ant-segmented-item {
         transition: all 0.3s;
         border-radius: 4px;
+        color: var(--text-primary);
 
         &-selected {
-          background-color: #ffffff;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          background-color: var(--bg-elevated);
+          box-shadow: var(--card-shadow);
         }
 
         .ant-segmented-item-label {
@@ -106,8 +109,8 @@
       align-items: center;
       
       .market-icon-vol {
-        background-color: #e6f7ff;
-        color: #1890ff;
+        background-color: rgba(var(--accent-color-rgb), 0.1);
+        color: var(--accent-color);
         padding: 2px 4px;
         border-radius: 4px;
         font-size: 12px;
@@ -117,7 +120,7 @@
       .market-icon-dot {
         width: 6px;
         height: 6px;
-        background-color: #f5222d;
+        background-color: var(--error-color);
         border-radius: 50%;
         margin-left: 4px;
       }
@@ -130,7 +133,7 @@
 
     .repeat-input {
       .input-field-control {
-        background-color: #fff;
+        background-color: var(--bg-primary);
       }
     }
   }
@@ -176,7 +179,7 @@
     transition: background-color 0.3s;
     
     &:hover {
-      background-color: #f5f5f5;
+      background-color: var(--hover-bg);
     }
     
     .market-icon-container {
@@ -185,8 +188,8 @@
       margin-right: 12px;
       
       .market-icon-vol {
-        background-color: #e6f7ff;
-        color: #1890ff;
+        background-color: rgba(var(--accent-color-rgb), 0.1);
+        color: var(--accent-color);
         padding: 2px 4px;
         border-radius: 4px;
         font-size: 12px;
@@ -196,7 +199,7 @@
       .market-icon-dot {
         width: 6px;
         height: 6px;
-        background-color: #f5222d;
+        background-color: var(--error-color);
         border-radius: 50%;
         margin-left: 4px;
       }

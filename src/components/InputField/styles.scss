@@ -26,7 +26,7 @@
   .input-field-label {
     display: block;
     font-size: 14px;
-    color: #333;
+    color: var(--text-primary);
   }
 
   .input-field-control {
@@ -38,6 +38,11 @@
     background-color: transparent;
     box-shadow: none;
     padding: 0;
+    color: var(--text-primary);
+    
+    &::placeholder {
+      color: var(--text-secondary);
+    }
   }
 
   .input-field-prefix-container {
@@ -62,7 +67,7 @@
     .input-field-selectable-value {
       flex: 1;
       font-size: 16px;
-      color: #333;
+      color: var(--text-primary);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -72,7 +77,7 @@
       display: flex;
       align-items: center;
       margin-left: 8px;
-      color: #999;
+      color: var(--text-secondary);
       font-size: 12px;
     }
   }
@@ -90,11 +95,12 @@
 
   .ant-input-number-handler-wrap {
     opacity: 1;
-    border-left: 1px solid #e0e0e0;
+    border-left: 1px solid var(--border-color);
   }
 
   .ant-input-number-input {
     padding: 0;
+    color: var(--text-primary);
   }
 }
 

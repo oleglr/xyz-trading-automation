@@ -25,17 +25,17 @@
     .bottom-action-sheet-handle-bar {
       width: 80px;
       height: 4px;
-      background-color: #e0e0e0;
+      background-color: var(--border-color);
       border-radius: 4px;
       transition: background-color 0.2s;
 
       &:hover {
-        background-color: #d0d0d0;
+        background-color: var(--border-color-active);
       }
     }
     
     &:active .bottom-action-sheet-handle-bar {
-      background-color: #bdbdbd;
+      background-color: var(--text-secondary);
       transform: scale(1.05);
       transition: background-color 0.1s, transform 0.1s;
     }
@@ -50,7 +50,7 @@
 
   .bottom-action-sheet-footer {
     padding: 16px 24px;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;

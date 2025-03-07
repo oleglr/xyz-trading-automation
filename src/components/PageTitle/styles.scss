@@ -13,7 +13,7 @@
   
   &__subtitle {
     font-size: 14px;
-    color: rgba(0, 0, 0, 0.7); /* Darker text color */
+    color: var(--text-secondary); /* Use theme variable */
     margin: 0;
     line-height: 1.4;
   }

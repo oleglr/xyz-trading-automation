@@ -29,7 +29,6 @@ class WebSocketService {
     this.clearPingInterval();
     this.pingInterval = window.setInterval(() => {
       if (this.isConnected()) {
-        console.log('Sending ping...');
         this.send({ ping: 1 });
       }
     }, 10000);
