@@ -29,6 +29,21 @@ export function StrategyForm({
   const { submitTrade } = useTrade();
 
   const handleSubmit = async (values: FormValues) => {
+    const newBot = {
+      id: Date.now().toString(),
+      name: values.botName || "New Strategy Bot",
+      market: values.market,
+      tradeType: values.tradeType,
+      strategy: "Custom",
+      params: [
+        { key: "repeat_trade", label: "Repeat trade", value: values.repeatTrade },
+        { key: "initial_stake", label: "Initial stake", value: values.initialStake },
+      ],
+    };
+
+    const storedBots = JSON.parse(localStorage.getItem("bots") || "[]");
+    const updatedBots = [...storedBots, newBot];
+    localStorage.setItem("bots", JSON.stringify(updatedBots));
     try {
       setIsSubmitting(true);
 
