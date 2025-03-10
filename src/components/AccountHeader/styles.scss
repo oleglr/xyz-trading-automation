@@ -46,7 +46,7 @@
     background-color: var(--accent-color);
     
     &:hover {
-      border-color: var(--accent-color);
+      border: none;
       color: var(--accent-color);
     }
   }

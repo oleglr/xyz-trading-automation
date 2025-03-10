@@ -461,8 +461,8 @@
     
     &__deposit-btn {
       background-color: var(--accent-color);
-      color: #fff;
-      
+      color: var(--text-primary);
+            
       &:hover {
         opacity: 0.85;
       }

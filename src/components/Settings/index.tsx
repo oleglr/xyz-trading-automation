@@ -36,8 +36,8 @@ const ThemeSelector = ({
   onThemeSelect: (theme: "light" | "dark" | "system") => void;
 }) => {
   const themeOptions = [
-    { label: "Light Mode", value: "light" },
-    { label: "Dark Mode", value: "dark" },
+    { label: "Light", value: "light" },
+    { label: "Dark", value: "dark" },
     { label: "System", value: "system" },
   ];
 

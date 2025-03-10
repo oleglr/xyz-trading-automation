@@ -11,6 +11,11 @@
   z-index: 1000;
   height: 60px;
   padding: 0;
+
+  .bot-icon {
+    width: 30px;
+    height: 30px;
+  }
   
   &__item {
     flex: 1;
@@ -43,7 +48,8 @@
   
   &__icon {
     margin-bottom: 4px;
-    width: 20px;
+    width: 18px;
+    height: 25px;
   }
   
   &__label {

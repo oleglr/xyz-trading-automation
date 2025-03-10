@@ -7,7 +7,7 @@ import { useAuth } from "./contexts/AuthContext";
 import { useNavigation } from "./contexts/NavigationContext";
 import { AuthorizeResponse } from "./types/auth";
 import { Navigation } from "./components/Navigation";
-import { AccountHeader } from "./components/AccountHeader";
+import { Header } from "./components/Header";
 import { pathToTab } from "./router";
 
 import "./styles/App.scss";
@@ -75,7 +75,9 @@ function MainApp() {
   return (
     <Layout className="app-layout">
       <Content className="app-main">
-        <AccountHeader
+        <Header
+          isLoggedIn={!!authParams?.token1}
+          onLogin={() => oauthService.initiateLogin()}
           accountType={accountType}
           balance={balance}
           currency={currency}

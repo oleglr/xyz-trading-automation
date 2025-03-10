@@ -1,4 +1,4 @@
-import { LabelPairedPuzzleLgFillIcon, LegacyMenuHamburger1pxIcon, LegacyTimeIcon, LabelPairedSquareListXlRegularIcon } from '@deriv/quill-icons';
+import { LabelPairedPuzzleLgFillIcon, LegacyMenuHamburger1pxIcon, LegacyTimeIcon, StandalonePuzzlePieceTwoFillIcon } from '@deriv/quill-icons';
 import { Link } from 'react-router-dom';
 import { useNavigation } from '../../contexts/NavigationContext';
 import { ReactNode } from 'react';
@@ -27,7 +27,7 @@ export function Navigation() {
       id: 'bots',
       path: '/bots',
       label: 'Bots',
-      icon: <LabelPairedSquareListXlRegularIcon className="app-navigation__icon" />
+      icon: <StandalonePuzzlePieceTwoFillIcon className="app-navigation__icon bot-icon" />
     },
     {
       id: 'positions',
