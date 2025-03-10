@@ -90,6 +90,11 @@ const mockBots = [
   },
 ];
 
+/**
+ * Bots: Displays a list of trading bots with search functionality.
+ * Inputs: None
+ * Output: JSX.Element - Component with bot cards, search functionality, and action buttons
+ */
 export function Bots() {
   const [bots, setBots] = useState(mockBots);
   const [searchVisible, setSearchVisible] = useState(false);
@@ -97,11 +102,21 @@ export function Bots() {
   const [isStrategyDrawerOpen, setIsStrategyDrawerOpen] = useState(false);
   const searchInputRef = useRef<HTMLDivElement>(null);
 
+  /**
+   * handleRunBot: Handles the action of running a specific bot.
+   * Inputs: botId: string - ID of the bot to run
+   * Output: void - Currently logs the action and bot ID to console
+   */
   const handleRunBot = (botId: string) => {
     console.log(`Running bot ${botId}`);
     // Implement bot running logic here
   };
 
+  /**
+   * handleAddBot: Handles the action of adding a new bot.
+   * Inputs: None
+   * Output: void - Currently logs the action to console
+   */
   const handleAddBot = () => {
     setIsStrategyDrawerOpen(true);
   };
@@ -110,18 +125,33 @@ export function Bots() {
     setIsStrategyDrawerOpen(false);
   };
 
+  /**
+   * handleSearchBot: Shows the search interface for filtering bots.
+   * Inputs: None
+   * Output: void - Sets searchVisible state to true
+   */
   const handleSearchBot = () => {
     setSearchVisible(true);
     // Focus the search input after it becomes visible
     // No need to focus manually as we're using autoFocus
   };
 
+  /**
+   * handleCloseSearch: Closes the search interface and resets to the original bot list.
+   * Inputs: None
+   * Output: void - Resets search state and restores original bot list
+   */
   const handleCloseSearch = () => {
     setSearchVisible(false);
     setSearchQuery("");
     setBots(mockBots); // Reset to original bots
   };
 
+  /**
+   * handleSearchChange: Filters the bot list based on search query text.
+   * Inputs: e: React.ChangeEvent<HTMLInputElement> - Input change event
+   * Output: void - Updates searchQuery state and filters bot list
+   */
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);

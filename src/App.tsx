@@ -14,6 +14,11 @@ import "./styles/App.scss";
 
 const { Content } = Layout;
 
+/**
+ * MainContent: Renders the main content area with routing outlet and navigation.
+ * Inputs: None
+ * Output: JSX.Element - Content container with Outlet for routes and Navigation component
+ */
 function MainContent() {
   const location = useLocation();
   const { setActiveTab } = useNavigation();
@@ -31,9 +36,14 @@ function MainContent() {
     </div>
   );
 }
-
+/**
+ * MainApp: Main application component that handles authentication flow and WebSocket connection.
+ * Inputs: None
+ * Output: JSX.Element - Application layout with AccountHeader and MainContent components
+ */
 function MainApp() {
   const { authParams, setAuthParams, setAuthorizeResponse } = useAuth();
+
 
   const accountType = "Real";
   const balance = "10,000.00";
@@ -68,6 +78,11 @@ function MainApp() {
       send({ authorize: authParams.token1 });
     }
   }, [authParams, isConnected, send]);
+  /**
+   * handleDepositClick: Handles user deposit button click action.
+   * Inputs: None
+   * Output: void - Currently logs the action to console
+   */
   const handleDepositClick = () => {
     // Handle deposit action
     console.log("Deposit clicked");

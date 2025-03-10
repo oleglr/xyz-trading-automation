@@ -12,6 +12,11 @@ interface NavItem {
   icon: ReactNode;
 }
 
+/**
+ * Navigation: Bottom navigation bar component with icons and labels.
+ * Inputs: None
+ * Output: JSX.Element - Navigation bar with links to different sections of the app
+ */
 export function Navigation() {
   const { activeTab } = useNavigation();
   
