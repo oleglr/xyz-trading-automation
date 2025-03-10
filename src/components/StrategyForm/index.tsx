@@ -29,6 +29,8 @@ export function StrategyForm({
   const { submitTrade } = useTrade();
 
   const handleSubmit = async (values: FormValues) => {
+    // for now some values here are static 
+    // once we have the api we will make this function dynamic based on the api schema
     const newBot = {
       id: Date.now().toString(),
       name: values.botName || "New Strategy Bot",
