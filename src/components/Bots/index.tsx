@@ -9,6 +9,8 @@ import { Button } from "antd";
 import { PageTitle } from "../PageTitle";
 import { BotCard } from "./components/BotCard/index";
 import { InputField } from "../InputField";
+import { SlideDrawer } from "../SlideDrawer";
+import { StrategyList } from "../StrategyList";
 import "./styles.scss";
 
 // Mock data for demonstration
@@ -92,6 +94,7 @@ export function Bots() {
   const [bots, setBots] = useState(mockBots);
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isStrategyDrawerOpen, setIsStrategyDrawerOpen] = useState(false);
   const searchInputRef = useRef<HTMLDivElement>(null);
 
   const handleRunBot = (botId: string) => {
@@ -100,8 +103,11 @@ export function Bots() {
   };
 
   const handleAddBot = () => {
-    console.log("Add new bot");
-    // Implement adding new bot logic here
+    setIsStrategyDrawerOpen(true);
+  };
+
+  const handleCloseStrategyDrawer = () => {
+    setIsStrategyDrawerOpen(false);
   };
 
   const handleSearchBot = () => {
@@ -231,6 +237,14 @@ export function Bots() {
           </div>
         )}
       </div>
+
+      <SlideDrawer
+        isOpen={isStrategyDrawerOpen}
+        onClose={handleCloseStrategyDrawer}
+        placement="right"
+      >
+        <StrategyList />
+      </SlideDrawer>
     </div>
   );
 }
