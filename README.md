@@ -534,10 +534,13 @@ API services are documented with:
 
 ### Additional Documentation
 
-- [API Documentation](./docs/api.md)
-- [Component Library](./docs/components.md)
-- [State Management](./docs/state.md)
-- [Testing Guide](./docs/testing.md)
+- [API Documentation](./src/services/README.md)
+- [Component Library](./src/components/README.md)
+- [State Management](./src/contexts/README.md)
+- [Custom Hooks](./src/hooks/README.md)
+- [Pages & Routes](./src/pages/README.md)
+- [Type Definitions](./src/types/README.md)
+- [Styling Guide](./src/styles/README.md)
 - [Git Hooks](./docs/git-hooks.md)
 
 ## 🤝 Contributing
@@ -561,13 +564,6 @@ API services are documented with:
 - Request review from at least one team member
 
 ## 📈 Performance Optimization
-
-### Key Performance Metrics
-
-- **First Contentful Paint (FCP)**: < 1.8s
-- **Time to Interactive (TTI)**: < 3.8s
-- **Total Bundle Size**: < 500KB (gzipped)
-- **API Response Time**: < 300ms
 
 ### Optimization Techniques
 
