@@ -1,5 +1,4 @@
 import { Button, Space } from "antd";
-import { LoginOutlined } from "@ant-design/icons";
 import DerivLogo from "../../assets/favicon.svg";
 import "./styles.scss";
 
