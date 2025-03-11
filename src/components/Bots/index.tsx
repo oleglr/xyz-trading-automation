@@ -4,39 +4,15 @@ import {
   PlusOutlined,
   CloseCircleFilled,
 } from "@ant-design/icons";
-import { StandaloneSearchFillIcon } from "@deriv/quill-icons";
 import { Button } from "antd";
 import { PageTitle } from "../PageTitle";
 import { BotCard } from "./components/BotCard/index";
 import { InputField } from "../InputField";
-import { SlideDrawer } from "../SlideDrawer";
-import { StrategyList } from "../StrategyList";
 import "./styles.scss";
 import { useNavigate } from "react-router-dom";
-
-const getStoredBots = () => {
-  const storedBots = localStorage.getItem("bots");
-  return storedBots ? JSON.parse(storedBots) : [];
-};
-
-// Mock data for demonstration
-const generateMockBots = () => {
-  return Array.from({ length: 6 }, (_, index) => ({
-    id: (index + 1).toString(),
-    name: "Martingale acc test",
-    market: "Volatility 100 (1s) Index",
-    tradeType: "Rise/Fall",
-    strategy: ["Repeat", "Martingale", "D'Alembert", "Oscar's Grind", "Fibonacci"][index % 5],
-    params: [
-      { key: "repeat_trade", label: "Repeat trade", value: 2 },
-      { key: "initial_stake", label: "Initial stake", value: "10.00" },
-      { key: "take_profit", label: "Take profit", value: "100.00" },
-      { key: "stop_loss", label: "Stop loss", value: "50.00" },
-    ],
-  }));
-};
-
-const mockBots = generateMockBots();
+import { useBots, Bot } from "../../hooks/useBots";
+import { StrategyDrawer } from "../StrategyDrawer";
+import { Strategy } from "../../types/strategy";
 
 /**
  * Bots: Displays a list of trading bots with search functionality.
@@ -44,15 +20,29 @@ const mockBots = generateMockBots();
  * Output: JSX.Element - Component with bot cards, search functionality, and action buttons
  */
 export function Bots() {
-  const [bots, setBots] = useState(getStoredBots());
+  const { 
+    bots, 
+    setBots, 
+    getStoredBots, 
+    deleteBot, 
+    filterBots 
+  } = useBots();
 
-useEffect(() => {
-  localStorage.setItem("bots", JSON.stringify(bots));
-}, [bots]);
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isStrategyDrawerOpen, setIsStrategyDrawerOpen] = useState(false);
   const searchInputRef = useRef<HTMLDivElement>(null);
+  
+  // State for strategy drawer
+  const [isStrategyDrawerOpen, setIsStrategyDrawerOpen] = useState(false);
+  const [selectedStrategy, setSelectedStrategy] = useState<Strategy | null>(null);
+  const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
+  
+  // Refresh bots list when component mounts or when returning from another page
+  useEffect(() => {
+    // Get the latest bots from localStorage
+    const latestBots = getStoredBots();
+    setBots(latestBots);
+  }, []);
 
   /**
    * handleRunBot: Handles the action of running a specific bot.
@@ -68,10 +58,6 @@ useEffect(() => {
 
   const handleAddBot = () => {
     navigate("/discover");
-  };
-
-  const handleCloseStrategyDrawer = () => {
-    setIsStrategyDrawerOpen(false);
   };
 
   /**
@@ -93,6 +79,7 @@ useEffect(() => {
   const handleCloseSearch = () => {
     setSearchVisible(false);
     setSearchQuery("");
+    setBots(getStoredBots());
   };
 
   /**
@@ -101,21 +88,27 @@ useEffect(() => {
    * Output: void - Updates searchQuery state and filters bot list
    */
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
+    const query = e.target.value.toLowerCase();
     setSearchQuery(query);
 
     if (query.trim() === "") {
-        return;
+      setBots(getStoredBots());
+      return;
     }
-
+    
     // Filter bots based on search query
-    const filteredBots = mockBots.filter(
-      (bot) =>
-        bot.name.toLowerCase().includes(query.toLowerCase()) ||
-        bot.market.toLowerCase().includes(query.toLowerCase()) ||
-        bot.strategy.toLowerCase().includes(query.toLowerCase())
-    );
+    const filteredBots = filterBots(query);
 
+    if (filteredBots.length === 0 && query.trim() !== "") {
+      // Show "No results found" message
+      setBots([]);
+    } else if (filteredBots.length > 0) {
+      // Show filtered results
+      setBots(filteredBots);
+    } else {
+      // Show all bots if no query or no results
+      setBots(getStoredBots());
+    }
   };
 
   // Close search when clicking outside
@@ -138,12 +131,52 @@ useEffect(() => {
   }, [searchVisible]);
 
   const handleDeleteBot = (botId: string) => {
-    const updatedBots = bots.filter(bot => bot.id !== botId);
-    setBots(updatedBots);
-    localStorage.setItem("bots", JSON.stringify(updatedBots));
+    deleteBot(botId);
   };
 
- return (
+  /**
+   * handleEditBot: Opens the strategy drawer to edit a bot
+   * Inputs: bot: Bot - The bot to edit
+   * Output: void - Opens the strategy drawer with the bot's data
+   */
+  const handleEditBot = (bot: Bot) => {
+    console.log(`Editing bot ${bot.name} (ID: ${bot.id})`);
+    // Create a mock strategy object for the drawer
+    // In a real app, you might fetch the actual strategy from an API
+    const mockStrategy: Strategy = {
+      id: "repeat-trade",  // Use a valid strategy ID from STRATEGY_PARAMS
+      title: "Repeat Trade",
+      description: "Configure repeat trade strategy",
+    };
+    
+    setSelectedStrategy(mockStrategy);
+    setSelectedBot(bot);
+    setIsStrategyDrawerOpen(true);
+  };
+
+  const handleCloseStrategyDrawer = () => {
+    // Close the drawer
+    setIsStrategyDrawerOpen(false);
+    setSelectedStrategy(null);
+    setSelectedBot(null);
+    
+    // Refresh the bots list to show any updates
+    const latestBots = getStoredBots();
+    setBots(latestBots);
+  };
+
+  // Debug logs
+  useEffect(() => {
+    if (isStrategyDrawerOpen) {
+      console.log("Strategy Drawer State:", {
+        isOpen: isStrategyDrawerOpen,
+        strategy: selectedStrategy,
+        bot: selectedBot
+      });
+    }
+  }, [isStrategyDrawerOpen, selectedStrategy, selectedBot]);
+
+  return (
     <div className="bots-container">
       <div className="bots-header">
         <PageTitle title="Bots list" />
@@ -155,13 +188,15 @@ useEffect(() => {
             className="bots-action-btn"
             onClick={handleSearchBot}
           />
-          <Button
-            type="text"
-            shape="circle"
-            icon={<PlusOutlined />}
-            className="bots-action-btn"
-            onClick={handleAddBot}
-          />
+          {bots.length > 0 && (
+            <Button
+              type="text"
+              shape="circle"
+              icon={<PlusOutlined />}
+              className="bots-action-btn"
+              onClick={handleAddBot}
+            />
+          )}
         </div>
       </div>
 
@@ -182,7 +217,7 @@ useEffect(() => {
                       style={{ color: "#999", cursor: "pointer" }}
                       onClick={() => {
                         setSearchQuery("");
-                        setBots(mockBots);
+                        setBots(getStoredBots());
                         // No need to focus manually as the input remains focused
                       }}
                     />
@@ -200,34 +235,41 @@ useEffect(() => {
 
       <div className="bots-list">
         {bots.length > 0 ? (
-          bots.map((bot) => (
+          bots.map((bot: Bot) => (
             <BotCard
               key={bot.id}
               bot={bot}
               onRun={() => handleRunBot(bot.id)}
               onDelete={() => handleDeleteBot(bot.id)}
+              onEdit={() => handleEditBot(bot)}
             />
           ))
-        ) : (
+        ) : searchQuery.trim() !== "" ? (
           <div className="no-results">
-            <div className="no-results-icon">
-              <StandaloneSearchFillIcon fill="#181C253D" iconSize='2xl'/>
+            <h3 className="no-results-title">No results found</h3>
+            <p className="no-results-subtitle">Try searching for something else.</p>
+          </div>
+        ) : (
+          <div className="empty-bots" onClick={handleAddBot}>
+            <div className="empty-bots-card">
+              <Button type="text" shape="circle" icon={<PlusOutlined />} className="empty-bots-add-btn" />
+              <div className="empty-bots-card-content">
+                <h3 className="empty-bots-card-content-title">Create bot</h3>
+                <p className="empty-bots-card-content-subtitle">Create bot to be added to the list and ready to run.</p>
+              </div>
             </div>
-            <h3 className="no-results-title">No results for {searchQuery}</h3>
-            <p className="no-results-subtitle">
-              Try searching for something else.
-            </p>
           </div>
         )}
       </div>
 
-      <SlideDrawer
-        isOpen={isStrategyDrawerOpen}
-        onClose={handleCloseStrategyDrawer}
-        placement="right"
-      >
-        <StrategyList />
-      </SlideDrawer>
+      {/* Strategy Drawer for editing bots */}
+      {isStrategyDrawerOpen && selectedStrategy && selectedBot && (
+        <StrategyDrawer
+          strategy={selectedStrategy}
+          onClose={handleCloseStrategyDrawer}
+          editBot={selectedBot}
+        />
+      )}
     </div>
   );
 }

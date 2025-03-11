@@ -7,7 +7,9 @@ import {
   LabelPairedCircleQuestionMdBoldIcon,
   MarketDerivedVolatility1001sIcon,
 } from "@deriv/quill-icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Bot, useBots } from "../../hooks/useBots";
 import { TradeErrorBoundary } from "../ErrorBoundary/TradeErrorBoundary";
 import { TradeStrategy } from "../../types/trade";
 import { useTrade } from "../../contexts/TradeContext";
@@ -21,66 +23,73 @@ export function StrategyForm({
   strategyType,
   strategyId,
   onBack,
+  editBot,
 }: StrategyFormProps) {
   const [form] = Form.useForm<FormValues>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showMarketSelector, setShowMarketSelector] = useState(false);
   const [selectedMarket, setSelectedMarket] = useState<MarketInfo>();
   const { submitTrade } = useTrade();
+  const { addBot, updateBot } = useBots();
+  const navigate = useNavigate();
+  const isEditMode = !!editBot;
+
+  // Set initial form values when in edit mode
+  useEffect(() => {
+    if (isEditMode && editBot) {
+      // Find param values from the bot
+      const repeatTradeParam = editBot.params.find(param => param.key === "repeat_trade");
+      const initialStakeParam = editBot.params.find(param => param.key === "initial_stake");
+      
+      // Set form values
+      form.setFieldsValue({
+        botName: editBot.name,
+        tradeType: editBot.tradeType,
+        market: editBot.market,
+        repeatTrade: repeatTradeParam ? repeatTradeParam.value : 2,
+        initialStake: initialStakeParam ? initialStakeParam.value : 10,
+      });
+    }
+  }, [isEditMode, editBot, form]);
 
   const handleSubmit = async (values: FormValues) => {
     // for now some values here are static 
     // once we have the api we will make this function dynamic based on the api schema
-    const newBot = {
-      id: Date.now().toString(),
-      name: values.botName || "New Strategy Bot",
-      market: values.market,
-      tradeType: values.tradeType,
-      strategy: "Custom",
+    const botData : Bot = {
+      id: isEditMode && editBot ? editBot.id : Date.now().toString(),
+      name: values.botName?.toString() || "New Strategy Bot",
+      market: values.market?.toString() || "",
+      tradeType: values.tradeType?.toString() || "",
+      strategy: isEditMode && editBot ? editBot.strategy : "Custom",
       params: [
-        { key: "repeat_trade", label: "Repeat trade", value: values.repeatTrade },
-        { key: "initial_stake", label: "Initial stake", value: values.initialStake },
+        { key: "repeat_trade", label: "Repeat trade", value: Number(values.repeatTrade) },
+        { key: "initial_stake", label: "Initial stake", value: Number(values.initialStake) },
       ],
     };
 
-    const storedBots = JSON.parse(localStorage.getItem("bots") || "[]");
-    const updatedBots = [...storedBots, newBot];
-    localStorage.setItem("bots", JSON.stringify(updatedBots));
     try {
       setIsSubmitting(true);
 
-      // Submit trade through trade context
-      const sessionId = await submitTrade(values, strategyId as TradeStrategy);
-
-      console.log("Bot created with session ID:", sessionId);
-
-      /* Add to processing stack
-      addProcess({
-        sessionId,
-        symbol: values.asset as string,
-        strategy: strategyType,
-        status: TradeStatusEnum.PENDING,
-        is_completed: false,
-        tradeInfo: {
-          session_id: sessionId,
-          contracts: [],
-          start_time: new Date().toISOString(),
-          end_time: '',
-          total_profit: 0,
-          win_profit: 0,
-          loss_profit: 0,
-          strategy: strategyType,
-          initial: values.amount as number,
-          ...values
-        }
-      });
-
-      // Call the provided onSubmit handler if needed
-      // await onSubmit?.(values);
-      */
-      // Handle successful submission (e.g., redirect or show success message)
+      if (isEditMode) {
+        // Update existing bot
+        updateBot(botData);
+        console.log("Bot updated successfully:", botData);
+        
+        // Close the drawer first, then navigate
+        onBack?.();
+        navigate("/bots");
+      } else {
+         // Navigate to the bots list page
+         navigate("/bots");
+        // Add new bot
+        addBot(botData);
+        
+        // Submit trade through trade context (only for new bots)
+        const sessionId = await submitTrade(values, strategyId as TradeStrategy);
+        console.log("Bot created with session ID:", sessionId);
+      }
     } catch (error) {
-      console.error("Failed to create bot:", error);
+      console.error("Failed to create/update bot:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -183,7 +192,7 @@ export function StrategyForm({
             onClick={() => form.submit()}
             loading={isSubmitting}
           >
-            Create bot
+            {isEditMode ? "Update bot" : "Create bot"}
           </Button>
         </div>
       </div>
