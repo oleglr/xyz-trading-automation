@@ -1,6 +1,5 @@
 import React from "react";
-import { Drawer, Button } from "antd";
-import { CloseOutlined } from "@ant-design/icons";
+import { Drawer } from "antd";
 import "./styles.scss";
 
 export interface SlideDrawerProps {
