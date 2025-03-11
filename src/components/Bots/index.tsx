@@ -10,11 +10,9 @@ import { BotCard } from "./components/BotCard/index";
 import { InputField } from "../InputField";
 import "./styles.scss";
 import { useNavigate } from "react-router-dom";
-
-const getStoredBots = () => {
-  const storedBots = localStorage.getItem("bots");
-  return storedBots ? JSON.parse(storedBots) : [];
-};
+import { useBots, Bot } from "../../hooks/useBots";
+import { StrategyDrawer } from "../StrategyDrawer";
+import { Strategy } from "../../types/strategy";
 
 /**
  * Bots: Displays a list of trading bots with search functionality.
@@ -22,17 +20,29 @@ const getStoredBots = () => {
  * Output: JSX.Element - Component with bot cards, search functionality, and action buttons
  */
 export function Bots() {
-  const [bots, setBots] = useState(getStoredBots().length > 0 ? getStoredBots() : []);
+  const { 
+    bots, 
+    setBots, 
+    getStoredBots, 
+    deleteBot, 
+    filterBots 
+  } = useBots();
 
-  // Only update localStorage when bots are actually modified (not during search)
-  const updateLocalStorage = (updatedBots) => {
-    localStorage.setItem("bots", JSON.stringify(updatedBots));
-  };
-
-  console.log(bots)
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLDivElement>(null);
+  
+  // State for strategy drawer
+  const [isStrategyDrawerOpen, setIsStrategyDrawerOpen] = useState(false);
+  const [selectedStrategy, setSelectedStrategy] = useState<Strategy | null>(null);
+  const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
+  
+  // Refresh bots list when component mounts or when returning from another page
+  useEffect(() => {
+    // Get the latest bots from localStorage
+    const latestBots = getStoredBots();
+    setBots(latestBots);
+  }, []);
 
   /**
    * handleRunBot: Handles the action of running a specific bot.
@@ -49,7 +59,6 @@ export function Bots() {
   const handleAddBot = () => {
     navigate("/discover");
   };
-
 
   /**
    * handleSearchBot: Shows the search interface for filtering bots.
@@ -86,13 +95,9 @@ export function Bots() {
       setBots(getStoredBots());
       return;
     }
+    
     // Filter bots based on search query
-    const filteredBots = getStoredBots().filter(
-      (bot) =>
-        bot.name.toLowerCase().includes(query) ||
-        bot.market.toLowerCase().includes(query) ||
-        bot.strategy.toLowerCase().includes(query)
-    );
+    const filteredBots = filterBots(query);
 
     if (filteredBots.length === 0 && query.trim() !== "") {
       // Show "No results found" message
@@ -126,10 +131,50 @@ export function Bots() {
   }, [searchVisible]);
 
   const handleDeleteBot = (botId: string) => {
-    const updatedBots = bots.filter(bot => bot.id !== botId);
-    setBots(updatedBots);
-    updateLocalStorage(updatedBots);
+    deleteBot(botId);
   };
+
+  /**
+   * handleEditBot: Opens the strategy drawer to edit a bot
+   * Inputs: bot: Bot - The bot to edit
+   * Output: void - Opens the strategy drawer with the bot's data
+   */
+  const handleEditBot = (bot: Bot) => {
+    console.log(`Editing bot ${bot.name} (ID: ${bot.id})`);
+    // Create a mock strategy object for the drawer
+    // In a real app, you might fetch the actual strategy from an API
+    const mockStrategy: Strategy = {
+      id: "repeat-trade",  // Use a valid strategy ID from STRATEGY_PARAMS
+      title: "Repeat Trade",
+      description: "Configure repeat trade strategy",
+    };
+    
+    setSelectedStrategy(mockStrategy);
+    setSelectedBot(bot);
+    setIsStrategyDrawerOpen(true);
+  };
+
+  const handleCloseStrategyDrawer = () => {
+    // Close the drawer
+    setIsStrategyDrawerOpen(false);
+    setSelectedStrategy(null);
+    setSelectedBot(null);
+    
+    // Refresh the bots list to show any updates
+    const latestBots = getStoredBots();
+    setBots(latestBots);
+  };
+
+  // Debug logs
+  useEffect(() => {
+    if (isStrategyDrawerOpen) {
+      console.log("Strategy Drawer State:", {
+        isOpen: isStrategyDrawerOpen,
+        strategy: selectedStrategy,
+        bot: selectedBot
+      });
+    }
+  }, [isStrategyDrawerOpen, selectedStrategy, selectedBot]);
 
   return (
     <div className="bots-container">
@@ -190,12 +235,13 @@ export function Bots() {
 
       <div className="bots-list">
         {bots.length > 0 ? (
-          bots.map((bot) => (
+          bots.map((bot: Bot) => (
             <BotCard
               key={bot.id}
               bot={bot}
               onRun={() => handleRunBot(bot.id)}
               onDelete={() => handleDeleteBot(bot.id)}
+              onEdit={() => handleEditBot(bot)}
             />
           ))
         ) : searchQuery.trim() !== "" ? (
@@ -216,6 +262,14 @@ export function Bots() {
         )}
       </div>
 
+      {/* Strategy Drawer for editing bots */}
+      {isStrategyDrawerOpen && selectedStrategy && selectedBot && (
+        <StrategyDrawer
+          strategy={selectedStrategy}
+          onClose={handleCloseStrategyDrawer}
+          editBot={selectedBot}
+        />
+      )}
     </div>
   );
 }

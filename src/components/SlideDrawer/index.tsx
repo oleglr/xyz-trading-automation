@@ -19,7 +19,6 @@ export interface SlideDrawerProps {
 export const SlideDrawer: React.FC<SlideDrawerProps> = ({
   isOpen,
   onClose,
-  title,
   children,
   placement = "right",
   width = 480,
@@ -43,16 +42,6 @@ export const SlideDrawer: React.FC<SlideDrawerProps> = ({
       } ${className}`}
       {...sizeProps}
     >
-      <div className="slide-drawer__header">
-        {title && <h3 className="slide-drawer__title">{title}</h3>}
-        <Button
-          type="text"
-          icon={<CloseOutlined />}
-          onClick={onClose}
-          className="slide-drawer__close"
-          aria-label="Close drawer"
-        />
-      </div>
       <div className="slide-drawer__body">{children}</div>
       {footerContent && (
         <div className="slide-drawer__footer">{footerContent}</div>

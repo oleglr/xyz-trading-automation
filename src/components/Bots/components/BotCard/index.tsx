@@ -26,6 +26,7 @@ interface BotCardProps {
   bot: Bot;
   onRun: () => void;
   onDelete: () => void;
+  onEdit?: () => void;
 }
 
 /**
@@ -33,7 +34,7 @@ interface BotCardProps {
  * Inputs: { bot: Bot, onRun: () => void } - Bot data and callback for run action
  * Output: JSX.Element - Card with bot details, parameters, and action buttons
  */
-export function BotCard({ bot, onRun, onDelete }: BotCardProps) {
+export function BotCard({ bot, onRun, onDelete, onEdit }: BotCardProps) {
   return (
     <div className="bot-card">
       <div className="bot-card__header">
@@ -46,6 +47,7 @@ export function BotCard({ bot, onRun, onDelete }: BotCardProps) {
                 key: "1",
                 label: "Edit",
                 icon: <EditOutlined />,
+                onClick: onEdit,
               },
               {
                 key: "2",
