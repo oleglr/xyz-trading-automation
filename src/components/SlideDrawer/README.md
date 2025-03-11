@@ -34,7 +34,7 @@ function MyComponent() {
   return (
     <>
       <Button onClick={openDrawer}>Open Drawer</Button>
-
+      
       <SlideDrawer
         isOpen={isOpen}
         onClose={closeDrawer}
