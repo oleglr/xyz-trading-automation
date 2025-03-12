@@ -1,5 +1,6 @@
-import { BalanceData } from '../../types/balance';
+import { BalanceData, ExternalAPIHeaders } from '../../types/balance';
 import { API_CONFIG, API_ENDPOINTS } from '../../config/api.config';
+import { apiService } from '../api/apiService';
 
 /**
  * Interface for the initial balance response from the API
@@ -26,13 +27,14 @@ class BalanceService {
    */
   async fetchInitialBalance(): Promise<BalanceData> {
     try {
-      const response = await fetch(`${API_CONFIG.EXTERNAL_API_BASE_URL}${API_ENDPOINTS.BALANCE}`);
+      const fullUrl = `${API_CONFIG.EXTERNAL_API_BASE_URL}${API_ENDPOINTS.BALANCE}`;
+      const headers: ExternalAPIHeaders = {};
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data: InitialBalanceResponse = await response.json();
+      const data: InitialBalanceResponse = await apiService.get<InitialBalanceResponse>(
+        fullUrl,
+        {}, // No query params
+        headers
+      );
       
       if (!data || !data.data || !data.data.balance) {
         throw new Error('Invalid response format');
