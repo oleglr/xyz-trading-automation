@@ -17,7 +17,7 @@ const __dirname = path.dirname(__filename);
 // Define paths
 const gitRootPath = execSync('git rev-parse --show-toplevel').toString().trim();
 const hooksDir = path.join(gitRootPath, '.git', 'hooks');
-const preCommitSource = path.join(gitRootPath, '.git', 'hooks', 'pre-commit');
+const preCommitSource = path.join(__dirname, 'pre-commit');
 const preCommitDest = path.join(hooksDir, 'pre-commit');
 
 // Ensure the hooks directory exists
@@ -27,7 +27,7 @@ if (!fs.existsSync(hooksDir)) {
   process.exit(1);
 }
 
-// Check if the pre-commit hook exists
+// Check if the pre-commit hook source exists
 if (!fs.existsSync(preCommitSource)) {
   console.error('❌ Pre-commit hook source not found:', preCommitSource);
   process.exit(1);

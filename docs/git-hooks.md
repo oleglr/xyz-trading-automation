@@ -4,21 +4,23 @@ This document provides detailed information about the Git hooks used in this pro
 
 ## Pre-commit Hook
 
-The pre-commit hook is designed to ensure code quality by verifying successful builds before allowing commits. This helps prevent broken code from being committed to the repository.
+The pre-commit hook is designed to ensure code quality by verifying syntax and successful builds before allowing commits. This helps prevent broken code from being committed to the repository.
 
 ### How It Works
 
 1. When you run `git commit`, the pre-commit hook is automatically triggered
-2. The hook runs `npm run build` to verify that the code builds successfully
-3. If the build succeeds, the commit proceeds normally
-4. If the build fails, the commit is aborted with an error message
+2. The hook runs `npm run lint` to check for syntax errors
+3. If the lint check passes, the hook runs `npm run build` to verify that the code builds successfully
+4. If both checks succeed, the commit proceeds normally
+5. If either check fails, the commit is aborted with an error message
 
 ### Features
 
-- **Build Verification**: Automatically runs `npm run build` before each commit
-- **Error Handling**: Prevents commits if the build fails and displays helpful error messages
+- **Syntax Verification**: Automatically runs `npm run lint` to check for syntax errors
+- **Build Verification**: Automatically runs `npm run build` to verify successful builds
+- **Error Handling**: Prevents commits if syntax or build checks fail and displays helpful error messages
 - **Cross-Platform Compatibility**: Works on Windows, macOS, and Linux
-- **Automatic Installation**: Installed automatically when you run `npm install`
+- **Automatic Installation**: Installed when you run `npm run setup-hooks`
 
 ### Bypass Options
 
@@ -89,7 +91,7 @@ If the pre-commit hook is not running when you commit, check the following:
 
 3. Reinstall the hook:
    ```bash
-   npm run postinstall
+   npm run setup-hooks
    ```
 
 #### Build Errors
