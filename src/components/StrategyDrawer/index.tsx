@@ -1,44 +1,49 @@
-import { Button } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
 import { StrategyForm } from '../StrategyForm';
 import { FormConfig } from '../../types/form';
 import './styles.scss';
+import { Bot } from '../../hooks/useBots';
+import { SlideDrawer } from '../SlideDrawer';
 
 import { StrategyDrawerProps, SYMBOL_FIELD, STRATEGY_PARAMS } from '../../types/strategy';
 
-export function StrategyDrawer({ strategy, onClose }: StrategyDrawerProps) {
+interface ExtendedStrategyDrawerProps extends StrategyDrawerProps {
+  editBot?: Bot;
+}
+
+export function StrategyDrawer({ strategy, onClose, editBot }: ExtendedStrategyDrawerProps) {
   if (!strategy) return null;
 
   const strategyParams = STRATEGY_PARAMS[strategy.id];
-  if (!strategyParams) return null;
+  if (!strategyParams) {
+    console.error(`Strategy params not found for ID: ${strategy.id}`);
+    return null;
+  }
 
   // Combine the static symbol field with strategy-specific fields
   const config: FormConfig = {
     fields: [SYMBOL_FIELD, ...strategyParams.fields]
   };
 
+  const drawerTitle = editBot ? `Edit ${editBot.name}` : strategy.title;
+
   return (
-    <>
-      <div className="strategy-drawer__backdrop" onClick={onClose} />
-      <div className="strategy-drawer strategy-drawer--open">
-        <div className="strategy-drawer__header">
-          <h2 className="strategy-drawer__title">Execute Strategy</h2>
-          <Button
-            type="text"
-            icon={<CloseOutlined />}
-            onClick={onClose}
-            className="strategy-drawer__close"
-          />
-        </div>
-        <div className="strategy-drawer__body">
-          <StrategyForm
-            config={config}
-            strategyType={strategy.title}
-            strategyId={strategy.id}
-            tradeType="Accumulators"
-          />
-        </div>
-      </div>
-    </>
+    <SlideDrawer
+      isOpen={true}
+      onClose={onClose}
+      title={drawerTitle}
+      width={480}
+      placement="right"
+      zIndex={1200}
+      className="strategy-drawer"
+    >
+      <StrategyForm
+        config={config}
+        strategyType={strategy.title}
+        strategyId={strategy.id}
+        tradeType="Accumulators"
+        onBack={onClose}
+        editBot={editBot}
+      />
+    </SlideDrawer>
   );
 }

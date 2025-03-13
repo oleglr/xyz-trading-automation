@@ -1,3 +1,5 @@
+import { Bot } from '../hooks/useBots';
+
 // Field types
 export type FieldType = 'text' | 'number' | 'number-prefix' | 'select';
 export type PrefixType = 'currency' | 'percentage';
@@ -17,10 +19,12 @@ export interface FormConfig {
 
 // Form values type
 export interface StrategyFormProps {
-  config: FormConfig;
+  config?: FormConfig;
   strategyType: string;
   strategyId: string;
-  tradeType: string;
+  tradeType?: string;
+  onBack?: () => void;
+  editBot?: Bot;
 }
 
 // Base form values that all forms can extend

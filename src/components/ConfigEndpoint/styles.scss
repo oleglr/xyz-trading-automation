@@ -19,16 +19,17 @@
     margin: 0;
     font-size: 2.2rem;
     font-weight: 500;
+    color: var(--text-primary);
   }
   
   &__home-link {
     font-size: 1.1rem;
-    color: #1890ff;
+    color: var(--accent-color);
     text-decoration: none;
     transition: color 0.3s;
     
     &:hover {
-      color: #40a9ff;
+      opacity: 0.8;
     }
   }
   
