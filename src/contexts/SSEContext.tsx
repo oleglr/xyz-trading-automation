@@ -21,18 +21,16 @@ export function SSEProvider({ children }: { children: ReactNode }) {
   const connectionRef = useRef<boolean>(false);
 
   const { authorizeResponse, authParams } = useAuth();
+useEffect(() => {
+  // Only check if we're already connected, but don't require login status
+  const canConnect = !connectionRef.current && import.meta.env.VITE_Auth_Url;
 
-  useEffect(() => {
-    const canConnect = !connectionRef.current && 
-      authorizeResponse?.authorize.loginid && 
-      authParams?.token1 &&
-      import.meta.env.VITE_Auth_Url;
+  if (!canConnect) {
+    return;
+  }
 
-    if (!canConnect) {
-      return;
-    }
-
-    console.log('SSE Context: Starting new connection...');
+  console.log('SSE Context: Starting new connection regardless of login status...');
+  connectionRef.current = true;
     connectionRef.current = true;
 
     const handlers = sseService.connect({
