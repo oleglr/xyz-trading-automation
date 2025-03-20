@@ -1,6 +1,7 @@
 export const API_CONFIG = {
   BASE_URL: import.meta.env.VITE_API_URL,
   WS_URL: import.meta.env.VITE_WS_URL,
+  EXTERNAL_API_BASE_URL: import.meta.env.VITE_EXTERNAL_API_BASE_URL,
   TIMEOUT: 30000, // 30 seconds
   RETRY_ATTEMPTS: 3,
   // Champion API specific configuration
@@ -20,6 +21,8 @@ export const API_ENDPOINTS = {
   // WebSocket and SSE endpoints
   WS: '/champion/v1/ws',
   SSE: '/champion/v1/sse',
+  BALANCE_STREAM: '/accounting/balance/stream',
+  BALANCE: '/accounting/balance',
 }
 
 export const WS_EVENTS = {
