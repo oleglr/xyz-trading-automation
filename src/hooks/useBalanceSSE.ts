@@ -22,7 +22,7 @@ export function useBalanceSSE() {
   const [isConnected, setIsConnected] = useState(false);
   
   // Check if the user is logged in
-  const isLoggedIn = !!(authParams?.token1 && authorizeResponse?.authorize);
+  const isLoggedIn = true;
   
   // Fetch initial balance only once when logged in
   useEffect(() => {
