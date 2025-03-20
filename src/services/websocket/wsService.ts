@@ -1,5 +1,7 @@
 import { WebSocketResponse, WebSocketRequest } from '../../types/websocket';
-import { configService } from '../config/configService';
+// Import configService if needed in the future
+// import { configService } from '../config/configService';
+import { API_CONFIG, API_ENDPOINTS } from '../../config/api.config';
 
 type MessageHandler = (data: WebSocketResponse) => void;
 
@@ -23,9 +25,18 @@ class WebSocketService {
    * Output: string - Complete WebSocket URL with authentication parameters
    */
   private getWsUrl(): string {
-    const wsUrl = configService.getValue('wsUrl');
-    const appId = configService.getValue('oauthAppId');
-    return `${wsUrl}?app_id=${appId}&l=en&brand=deriv`;
+    // Use the new Champion API WebSocket URL
+    const baseUrl = API_CONFIG.BASE_URL;
+    const wsEndpoint = API_ENDPOINTS.WS;
+    
+    // Construct URL with query parameters
+    const url = new URL(`${baseUrl}${wsEndpoint}`);
+    
+    // Add required query parameters
+    url.searchParams.set('account_uuid', API_CONFIG.ACCOUNT_UUID);
+    url.searchParams.set('champion_url', API_CONFIG.CHAMPION_API_URL);
+    
+    return url.toString();
   }
 
   /**
@@ -88,7 +99,25 @@ class WebSocketService {
       this.ws = null;
     }
 
-    this.ws = new WebSocket(this.getWsUrl());
+    // Create WebSocket with URL
+    const wsUrl = this.getWsUrl();
+    this.ws = new WebSocket(wsUrl);
+    
+    // Add required headers if supported by browser
+    // Note: Some browsers don't support custom headers in WebSocket constructor
+    if ('setRequestHeader' in this.ws) {
+      // Use type assertion for non-standard WebSocket extension
+      const wsWithHeaders = this.ws as unknown as {
+        setRequestHeader: (name: string, value: string) => void
+      };
+      
+      // Add only the required headers as per Postman collection
+      wsWithHeaders.setRequestHeader('Authorization', `Bearer ${API_CONFIG.CHAMPION_TOKEN}`);
+      wsWithHeaders.setRequestHeader('Accept', 'application/json, text/plain, */*');
+      wsWithHeaders.setRequestHeader('Content-Type', 'application/json');
+    } else {
+      console.warn('WebSocket custom headers not supported by browser. Authentication may fail.');
+    }
 
     this.ws.onopen = () => {
       console.log('WebSocket connected');
@@ -112,7 +141,19 @@ class WebSocketService {
     this.ws.onmessage = (event) => {
       try {
         const message = JSON.parse(event.data) as WebSocketResponse;
-        if (this.messageHandler && message.msg_type !== 'ping') {
+        
+        // Log the received message for debugging
+        console.log('WebSocket message received:', message);
+        
+        // Handle Champion API specific message format
+        if (this.messageHandler) {
+          // Skip ping messages
+          if (message.msg_type === 'ping' || message.type === 'ping') {
+            console.log('WebSocket ping received');
+            return;
+          }
+          
+          // Process and forward the message
           this.messageHandler(message);
         }
       } catch (error) {
@@ -143,10 +184,15 @@ class WebSocketService {
    */
   public send(payload: WebSocketRequest): void {
     if (this.ws?.readyState === WebSocket.OPEN) {
+      // Add Champion API required fields
       const message = {
         ...payload,
-        req_id: Date.now()
+        req_id: Date.now(),
+        account_uuid: API_CONFIG.ACCOUNT_UUID,
+        champion_url: API_CONFIG.CHAMPION_API_URL
       };
+      
+      console.log('Sending WebSocket message:', message);
       this.ws.send(JSON.stringify(message));
     } else {
       console.error('WebSocket is not connected');

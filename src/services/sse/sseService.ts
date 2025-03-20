@@ -1,4 +1,5 @@
 import { SSEOptions, SSEService } from '../../types/sse';
+import { API_CONFIG } from '../../config/api.config';
 
 class CustomEventSource {
   private abortController: AbortController | null = null;
@@ -32,12 +33,24 @@ class CustomEventSource {
     this.abortController = new AbortController();
 
     try {
-      const response = await fetch(this.url, {
+      // Parse URL to add query parameters if they exist in the URL
+      const url = new URL(this.url);
+      
+      // Add query parameters from the URL search params
+      const urlSearchParams = new URLSearchParams(url.search);
+      
+      // Add account_uuid and champion_url if they exist in the URL
+      if (urlSearchParams.has('account_uuid')) {
+        url.searchParams.set('account_uuid', urlSearchParams.get('account_uuid')!);
+      }
+      
+      if (urlSearchParams.has('champion_url')) {
+        url.searchParams.set('champion_url', urlSearchParams.get('champion_url')!);
+      }
+      
+      const response = await fetch(url.toString(), {
         method: 'GET',
         headers: {
-          'Accept': 'text/event-stream',
-          'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
           ...this.headers
         },
         mode: 'cors',
@@ -183,8 +196,8 @@ class SSEServiceImpl implements SSEService {
   }
 
   connect(options: SSEOptions): number {
-    if (this.isConnected() && this.lastOptions && 
-        this.lastOptions.url === options.url && 
+    if (this.isConnected() && this.lastOptions &&
+        this.lastOptions.url === options.url &&
         JSON.stringify(this.lastOptions.headers) === JSON.stringify(options.headers)) {
       if (options.onMessage) {
         this.messageHandlers.add(options.onMessage);
@@ -202,9 +215,43 @@ class SSEServiceImpl implements SSEService {
     this.lastOptions = options;
 
     try {
+      // Prepare URL with query parameters
+      let url = options.url;
+      if (options.queryParams) {
+        const urlObj = new URL(url);
+        Object.entries(options.queryParams).forEach(([key, value]) => {
+          urlObj.searchParams.set(key, value);
+        });
+        url = urlObj.toString();
+      } else {
+        // Add default query parameters from API_CONFIG
+        const urlObj = new URL(url);
+        urlObj.searchParams.set('account_uuid', API_CONFIG.ACCOUNT_UUID);
+        urlObj.searchParams.set('champion_url', API_CONFIG.CHAMPION_API_URL);
+        url = urlObj.toString();
+      }
+
+      // Prepare headers with Bearer token
+      const headers = {
+        ...options.headers
+      };
+      
+      // Only include the required headers as per Postman collection
+      if (!headers['Authorization']) {
+        headers['Authorization'] = `Bearer ${API_CONFIG.CHAMPION_TOKEN}`;
+      }
+      
+      if (!headers['Accept']) {
+        headers['Accept'] = 'application/json, text/plain, */*';
+      }
+      
+      if (!headers['Content-Type']) {
+        headers['Content-Type'] = 'application/json';
+      }
+
       this.eventSource = new CustomEventSource(
-        options.url,
-        options.headers,
+        url,
+        headers,
         options.withCredentials
       );
 

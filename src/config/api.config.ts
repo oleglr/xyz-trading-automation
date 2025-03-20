@@ -3,17 +3,23 @@ export const API_CONFIG = {
   WS_URL: import.meta.env.VITE_WS_URL,
   TIMEOUT: 30000, // 30 seconds
   RETRY_ATTEMPTS: 3,
+  // Champion API specific configuration
+  CHAMPION_TOKEN: import.meta.env.VITE_CHAMPION_TOKEN,
+  ACCOUNT_UUID: import.meta.env.VITE_ACCOUNT_UUID,
+  CHAMPION_API_URL: import.meta.env.VITE_CHAMPION_API_URL,
 }
 
 export const API_ENDPOINTS = {
   // Trading endpoints
-  REPEAT_TRADE: '/repeat-trade',
-  IS_TRADING: '/is-trading',
-  STOP_TRADING: '/stop-trading',
-  Threshold_Trade: '/threshold-trade',
-  Martingale_Trade: '/martingale-trade',
-  // WebSocket endpoint
-  WS: '/ws',
+  REPEAT_TRADE: '/champion/v1/repeat-trade',
+  IS_TRADING: '/champion/v1/is-trading',
+  STOP_TRADING: '/champion/v1/stop-trading',
+  STRATEGIES: '/champion/v1/strategies',
+  Threshold_Trade: '/champion/v1/threshold-trade',
+  Martingale_Trade: '/champion/v1/martingale-trade',
+  // WebSocket and SSE endpoints
+  WS: '/champion/v1/ws',
+  SSE: '/champion/v1/sse',
 }
 
 export const WS_EVENTS = {

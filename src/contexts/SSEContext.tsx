@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, useRef, ReactNode } fro
 import { sseService } from '../services/sse/sseService';
 import { SSEMessage } from '../types/sse';
 import { useAuth } from './AuthContext';
+import { API_CONFIG, API_ENDPOINTS } from '../config/api.config';
 
 interface SSEContextType {
   isConnected: boolean;
@@ -35,12 +36,15 @@ export function SSEProvider({ children }: { children: ReactNode }) {
     connectionRef.current = true;
 
     const handlers = sseService.connect({
-      url: `${import.meta.env.VITE_API_URL}/sse`,
+      url: `${API_CONFIG.BASE_URL}${API_ENDPOINTS.SSE}`,
       headers: {
-        loginid: String(authorizeResponse.authorize.loginid || ''),
-        authorize: String(authParams?.token1 || ''),
-        'auth-url': import.meta.env.VITE_Auth_Url,
-        'Connection': 'keep-alive'
+        'Authorization': `Bearer ${API_CONFIG.CHAMPION_TOKEN}`,
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/json'
+      },
+      queryParams: {
+        account_uuid: API_CONFIG.ACCOUNT_UUID,
+        champion_url: API_CONFIG.CHAMPION_API_URL
       },
       onMessage: (event) => {
         if (!connectionRef.current) return;
