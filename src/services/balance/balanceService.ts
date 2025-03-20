@@ -27,7 +27,7 @@ class BalanceService {
    */
   async fetchInitialBalance(): Promise<BalanceData> {
     try {
-      const fullUrl = `${API_CONFIG.EXTERNAL_API_BASE_URL}${API_ENDPOINTS.BALANCE}`;
+      const fullUrl = `${API_CONFIG.BASE_URL}${API_ENDPOINTS.BALANCE}`;
       const headers: ExternalAPIHeaders = {};
       
       const data: InitialBalanceResponse = await apiService.get<InitialBalanceResponse>(
@@ -98,7 +98,7 @@ class BalanceService {
    * @returns The configured balance stream URL
    */
   getBalanceStreamUrl(): string {
-    return `${API_CONFIG.EXTERNAL_API_BASE_URL}${API_ENDPOINTS.BALANCE_STREAM}`;
+    return `${API_CONFIG.BASE_URL}${API_ENDPOINTS.BALANCE_STREAM}`;
   }
 
   /**
