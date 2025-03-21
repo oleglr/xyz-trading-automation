@@ -1,5 +1,6 @@
 import { AuthorizeResponse } from '../types/auth';
-import { configService } from '../services/config/configService';
+// Import configService if needed in the future
+// import { configService } from '../services/config/configService';
 
 interface AuthState {
   authorizeResponse: AuthorizeResponse | null;
@@ -50,13 +51,7 @@ class AuthStore {
   }
 
   public getHeaders(): Record<string, string> {
-    return {
-      'loginid': this.state.authorizeResponse?.authorize.loginid || '',
-      'authorize': this.state.authParams?.token1 || '',
-      'userid': String(this.state.authorizeResponse?.authorize.userId || ''),
-      'auth-url': configService.getValue('authUrl'),
-      'deriv-url': configService.getValue('derivUrl')
-    };
+    return {};
   }
 }
 

@@ -1,4 +1,5 @@
 import { SSEOptions, SSEService } from '../../types/sse';
+import { API_CONFIG } from '../../config/api.config';
 
 class CustomEventSource {
   private abortController: AbortController | null = null;
@@ -32,14 +33,30 @@ class CustomEventSource {
     this.abortController = new AbortController();
 
     try {
-      const response = await fetch(this.url, {
+      // Parse URL to add query parameters if they exist in the URL
+      const url = new URL(this.url);
+      
+      // Add query parameters from the URL search params
+      const urlSearchParams = new URLSearchParams(url.search);
+      
+      // Only add account_uuid parameter, ignore champion_url
+      if (urlSearchParams.has('account_uuid')) {
+        url.searchParams.set('account_uuid', urlSearchParams.get('account_uuid')!);
+      }
+      
+      // Log the final URL for debugging
+      console.log('SSE Service: Connecting to URL:', url.toString());
+      
+      // Ensure we have the required headers for SSE
+      const headers = {
+        ...this.headers,
+        'Accept': this.headers['Accept'] || 'text/event-stream',
+        'Cache-Control': this.headers['Cache-Control'] || 'no-cache'
+      };
+      
+      const response = await fetch(url.toString(), {
         method: 'GET',
-        headers: {
-          'Accept': 'text/event-stream',
-          'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
-          ...this.headers
-        },
+        headers,
         mode: 'cors',
         credentials: this.withCredentials ? 'include' : 'omit',
         signal: this.abortController.signal
@@ -183,8 +200,8 @@ class SSEServiceImpl implements SSEService {
   }
 
   connect(options: SSEOptions): number {
-    if (this.isConnected() && this.lastOptions && 
-        this.lastOptions.url === options.url && 
+    if (this.isConnected() && this.lastOptions &&
+        this.lastOptions.url === options.url &&
         JSON.stringify(this.lastOptions.headers) === JSON.stringify(options.headers)) {
       if (options.onMessage) {
         this.messageHandlers.add(options.onMessage);
@@ -202,9 +219,34 @@ class SSEServiceImpl implements SSEService {
     this.lastOptions = options;
 
     try {
+      // Prepare URL with query parameters
+      let url = options.url;
+      if (options.queryParams) {
+        const urlObj = new URL(url);
+        // Only set the account_uuid parameter, ignore champion_url
+        if (options.queryParams.account_uuid) {
+          urlObj.searchParams.set('account_uuid', options.queryParams.account_uuid);
+        }
+        url = urlObj.toString();
+      } else {
+        // Add default query parameters from API_CONFIG
+        const urlObj = new URL(url);
+        urlObj.searchParams.set('account_uuid', API_CONFIG.ACCOUNT_UUID);
+        // Don't add champion_url parameter
+        url = urlObj.toString();
+      }
+
+      // Include the required headers as per Postman collection
+      const headers = {
+        ...options.headers,
+        'Authorization': options.headers['Authorization'] || `Bearer ${API_CONFIG.CHAMPION_TOKEN}`,
+        'Accept': 'text/event-stream', // Always use text/event-stream for SSE
+        'Cache-Control': 'no-cache'
+      };
+
       this.eventSource = new CustomEventSource(
-        options.url,
-        options.headers,
+        url,
+        headers,
         options.withCredentials
       );
 

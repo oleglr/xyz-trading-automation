@@ -101,7 +101,7 @@ function MainApp() {
     <Layout className="app-layout">
       <Content className="app-main">
         <Header
-          isLoggedIn={!!authParams?.token1}
+          isLoggedIn={true}
           onLogin={() => oauthService.initiateLogin()}
           accountType={accountType}
           balance={balance}

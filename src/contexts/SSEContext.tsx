@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, useRef, ReactNode } fro
 import { sseService } from '../services/sse/sseService';
 import { SSEMessage } from '../types/sse';
 import { useAuth } from './AuthContext';
+import { API_CONFIG, API_ENDPOINTS } from '../config/api.config';
 
 interface SSEContextType {
   isConnected: boolean;
@@ -19,28 +20,30 @@ export function SSEProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const connectionRef = useRef<boolean>(false);
 
-  const { authorizeResponse, authParams } = useAuth();
+  const { authorizeResponse } = useAuth();
+useEffect(() => {
+  // Only check if we're already connected, but don't require login status
+  const canConnect = !connectionRef.current;
 
-  useEffect(() => {
-    const canConnect = !connectionRef.current && 
-      authorizeResponse?.authorize.loginid && 
-      authParams?.token1 &&
-      import.meta.env.VITE_Auth_Url;
+  if (!canConnect) {
+    return;
+  }
 
-    if (!canConnect) {
-      return;
-    }
-
-    console.log('SSE Context: Starting new connection...');
+  console.log('SSE Context: Starting new connection regardless of login status...');
+  connectionRef.current = true;
     connectionRef.current = true;
 
     const handlers = sseService.connect({
-      url: `${import.meta.env.VITE_API_URL}/api/v2/sse`,
+      // url: `${API_CONFIG.BASE_URL}${API_ENDPOINTS.SSE}`,
+      url: `https://champion.mobile-bot.deriv.dev${API_ENDPOINTS.SSE}`,
       headers: {
-        loginid: String(authorizeResponse.authorize.loginid || ''),
-        authorize: String(authParams?.token1 || ''),
-        'auth-url': import.meta.env.VITE_Auth_Url,
-        'Connection': 'keep-alive'
+        'Authorization': `Bearer ${API_CONFIG.CHAMPION_TOKEN}`,
+        'Accept': 'text/event-stream',
+        'Cache-Control': 'no-cache'
+      },
+      queryParams: {
+        account_uuid: API_CONFIG.ACCOUNT_UUID
+        // Don't include champion_url parameter
       },
       onMessage: (event) => {
         if (!connectionRef.current) return;

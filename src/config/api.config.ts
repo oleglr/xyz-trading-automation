@@ -1,24 +1,27 @@
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_URL,
+  BASE_URL: import.meta.env.VITE_API_URL || 'https://champion.mobile-bot.deriv.dev',
   WS_URL: import.meta.env.VITE_WS_URL,
-  EXTERNAL_API_BASE_URL: import.meta.env.VITE_EXTERNAL_API_BASE_URL,
   TIMEOUT: 30000, // 30 seconds
   RETRY_ATTEMPTS: 3,
+  // Champion API specific configuration
+  CHAMPION_TOKEN: import.meta.env.VITE_CHAMPION_TOKEN || 'champion_trading_automation',
+  ACCOUNT_UUID: import.meta.env.VITE_ACCOUNT_UUID || 'account_uuid',
+  CHAMPION_API_URL: import.meta.env.VITE_CHAMPION_API_URL || 'http://mobile-backend-service-mock-gray:3000',
 }
 
 export const API_ENDPOINTS = {
   // Trading endpoints
-  REPEAT_TRADE: '/api/v2/repeat-trade',
-  IS_TRADING: '/api/v2/is-trading',
-  STOP_TRADING: '/api/v2/stop-trading',
-  Threshold_Trade: '/api/v2/threshold-trade',
-  Martingale_Trade: '/api/v2/martingale-trade',
-  // WebSocket endpoint
-  WS: '/ws',
-  // SSE endpoints
-  BALANCE_STREAM: '/accounting/balance/stream',
-  // Balance endpoints
-  BALANCE: '/accounting/balance',
+  REPEAT_TRADE: '/champion/v1/repeat-trade',
+  IS_TRADING: '/champion/v1/is-trading',
+  STOP_TRADING: '/champion/v1/stop-trading',
+  STRATEGIES: '/champion/v1/strategies',
+  Threshold_Trade: '/champion/v1/threshold-trade',
+  Martingale_Trade: '/champion/v1/martingale-trade',
+  // WebSocket and SSE endpoints
+  WS: '/champion/v1/ws',
+  SSE: '/champion/v1/sse',
+  BALANCE_STREAM: '/v1/accounting/balance/stream',
+  BALANCE: '/v1/accounting/balance',
 }
 
 export const WS_EVENTS = {

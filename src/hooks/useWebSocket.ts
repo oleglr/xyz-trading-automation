@@ -1,8 +1,12 @@
 import { useEffect, useCallback, useState } from 'react';
 import { wsService } from '../services/websocket/wsService';
+import { API_CONFIG } from '../config/api.config';
 
 interface WebSocketMessage {
-  msg_type: string;
+  msg_type?: string;
+  type?: string;
+  account_uuid?: string;
+  champion_url?: string;
   [key: string]: unknown;
 }
 
@@ -28,8 +32,19 @@ export function useWebSocket<T extends WebSocketMessage>(
    * Output: void - Calls the onMessage callback if provided
    */
   const handleMessage = useCallback((message: WebSocketMessage) => {
+    // Handle both old and new API message formats
     if (onMessage) {
-      onMessage(message as T);
+      // Check if this is a Champion API message (has type instead of msg_type)
+      if (message.type && !message.msg_type) {
+        // Convert to expected format if needed
+        const adaptedMessage = {
+          ...message,
+          msg_type: message.type
+        };
+        onMessage(adaptedMessage as T);
+      } else {
+        onMessage(message as T);
+      }
     }
   }, [onMessage]);
 
@@ -56,8 +71,13 @@ export function useWebSocket<T extends WebSocketMessage>(
    * Inputs: payload: Record<string, unknown> - The data to send to the server
    * Output: void - Transmits the message through the WebSocket connection
    */
-  const send = useCallback((payload: Record<string, unknown>) => {
-    wsService.send(payload);
+  const send = useCallback((payload: Record<string, unknown>) => {    
+    const enhancedPayload = {
+      ...payload,
+      account_uuid: payload.account_uuid || API_CONFIG.ACCOUNT_UUID,
+      champion_url: payload.champion_url || API_CONFIG.CHAMPION_API_URL
+    };
+    wsService.send(enhancedPayload);
   }, []);
 
   // Handle auto-connect and cleanup

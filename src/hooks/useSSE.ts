@@ -1,6 +1,7 @@
 import { useEffect, useCallback, useState } from 'react';
 import { sseService } from '../services/sse/sseService';
 import { SSEHeaders } from '../types/sse';
+import { API_CONFIG } from '../config/api.config';
 
 interface UseSSEOptions<T> {
   url: string;
@@ -10,6 +11,11 @@ interface UseSSEOptions<T> {
   onOpen?: (event: Event) => void;
   autoConnect?: boolean;
   withCredentials?: boolean;
+  queryParams?: {
+    account_uuid?: string;
+    champion_url?: string;
+    [key: string]: string | undefined;
+  };
 }
 
 export function useSSE<T = any>(
@@ -23,7 +29,8 @@ export function useSSE<T = any>(
     onError,
     onOpen,
     autoConnect = true,
-    withCredentials = true
+    withCredentials = true,
+    queryParams
   } = options;
 
   const handleMessage = useCallback((event: MessageEvent) => {
@@ -38,15 +45,32 @@ export function useSSE<T = any>(
   }, [onMessage]);
 
   const connect = useCallback(() => {
+    // Include both account_uuid and champion_url in the query params
+    // but we'll modify the sseService to only use account_uuid
+    const defaultQueryParams = {
+      account_uuid: API_CONFIG.ACCOUNT_UUID,
+      champion_url: API_CONFIG.CHAMPION_API_URL, // Include this to satisfy TypeScript
+      ...queryParams
+    };
+
+    // Add required headers for SSE connection
+    const defaultHeaders = {
+      ...headers,
+      'Authorization': headers['Authorization'] || `Bearer ${API_CONFIG.CHAMPION_TOKEN}`,
+      'Accept': headers['Accept'] || 'text/event-stream',
+      'Cache-Control': headers['Cache-Control'] || 'no-cache'
+    };
+
     sseService.connect({
       url,
-      headers,
+      headers: defaultHeaders,
       withCredentials,
       onMessage: handleMessage,
       onError,
-      onOpen
+      onOpen,
+      queryParams: defaultQueryParams
     });
-  }, [url, headers, withCredentials, handleMessage, onError, onOpen]);
+  }, [url, headers, withCredentials, handleMessage, onError, onOpen, queryParams]);
 
   const disconnect = useCallback(() => {
     sseService.disconnect();

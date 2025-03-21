@@ -15,8 +15,8 @@ const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   const [theme, setThemeState] = useState<Theme>(() => {
     // Check if theme preference exists in localStorage
     const savedTheme = localStorage.getItem('theme');
-    // Return saved theme or default to 'system'
-    return (savedTheme as Theme) || 'system';
+    // Return saved theme or default to 'dark'
+    return (savedTheme as Theme) || 'dark';
   });
 
   // Track system preference
