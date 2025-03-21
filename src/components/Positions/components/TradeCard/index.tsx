@@ -210,13 +210,14 @@ const TradeCard: React.FC<TradeCardProps> = ({ trade, loading, onClose, lastUpda
         {trade.status === 'stopped' || trade.status === 'error' ? (
           <></>
         ) : (
-          <Button
-            type="primary"
-            onClick={() => onClose?.(trade.session_id)}
-            disabled={loading}
-          >
-            Close Position
-          </Button>
+          // <Button
+          //   type="primary"
+          //   onClick={() => onClose?.(trade.session_id)}
+          //   disabled={loading}
+          // >
+          //   Close Position
+          // </Button>
+          <></>
         )}
       </div>
     </Card>

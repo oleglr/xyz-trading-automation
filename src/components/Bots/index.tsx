@@ -12,6 +12,7 @@ import "./styles.scss";
 import { useNavigate } from "react-router-dom";
 import { useBots, Bot } from "../../hooks/useBots";
 import { useSSE } from "../../hooks/useSSE";
+import { useRunningBots } from "../../hooks/useRunningBots";
 import { StrategyDrawer } from "../StrategyDrawer";
 import { Strategy } from "../../types/strategy";
 import { SSEMessage, TradeUpdateMessage } from "../../types/sse";
@@ -33,15 +34,19 @@ export function Bots() {
 
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const sseRef = useRef<EventSource | null>(null);
   
   // State for strategy drawer
   const [isStrategyDrawerOpen, setIsStrategyDrawerOpen] = useState(false);
   const [selectedStrategy, setSelectedStrategy] = useState<Strategy | null>(null);
   const [selectedBot, setSelectedBot] = useState<Bot | null>(null);
   
-  // State to track running bots and their session IDs
-  const [runningBots, setRunningBots] = useState<Record<string, string>>({});
+  // Use the running bots hook to persist running bots state
+  const {
+    runningBots,
+    addRunningBot,
+    removeRunningBot,
+    getSessionId
+  } = useRunningBots();
   
   // Handle SSE messages
   const handleSseMessage = useCallback((message: SSEMessage<TradeUpdateMessage>) => {
@@ -49,7 +54,31 @@ export function Bots() {
     // Log detailed message structure for debugging
     console.log('Message type:', message.type);
     console.log('Message details:', JSON.stringify(message.data, null, 2));
-  }, []);
+    
+    // Process the message to update running bots state
+    if (message.type === 'trade_update') {
+      const data = message.data;
+      
+      // Check if this is a bot status update
+      if (data && data.session_id) {
+        const sessionId = data.session_id;
+        const isCompleted = data.is_completed;
+        
+        // Find the bot with this session ID
+        const botEntry = Object.entries(runningBots).find(([_, sid]) => sid === sessionId);
+        
+        if (botEntry) {
+          const [botId] = botEntry;
+          
+          // If the bot is completed, remove it from running bots
+          if (isCompleted) {
+            console.log(`Bot ${botId} with session ${sessionId} is now completed`);
+            removeRunningBot(botId);
+          }
+        }
+      }
+    }
+  }, [runningBots, removeRunningBot]);
   
   // Initialize SSE connection with default values
   const { isConnected, connect, disconnect } = useSSE<SSEMessage<TradeUpdateMessage>>({
@@ -63,7 +92,7 @@ export function Bots() {
     autoConnect: false // We'll connect manually when a bot starts running
   });
   
-  // Set up SSE URL and headers
+  // Set up SSE URL and headers and connect to SSE
   useEffect(() => {
     const setupSSE = async () => {
       try {
@@ -74,13 +103,28 @@ export function Bots() {
         // Using the simplified SSE endpoint format
         const sseUrl = `${API_CONFIG.BASE_URL}${API_ENDPOINTS.SSE}?account_uuid=${API_CONFIG.ACCOUNT_UUID}`;
         console.log('SSE URL configured:', sseUrl);
+        
+        // Connect to SSE to get updates about running bots
+        if (!isConnected) {
+          connect();
+          console.log('SSE connected on component mount to track running bots');
+        }
       } catch (error) {
         console.error('Error setting up SSE:', error);
       }
     };
     
     setupSSE();
-  }, []);
+    
+    // Cleanup on unmount
+    return () => {
+      if (isConnected) {
+        // We don't disconnect here because we want to keep the connection
+        // even when navigating away from the page
+        console.log('Keeping SSE connection active for bot status tracking');
+      }
+    };
+  }, [connect, isConnected]);
   
   // Refresh bots list when component mounts or when returning from another page
   useEffect(() => {
@@ -90,13 +134,7 @@ export function Bots() {
     
     // Cleanup SSE connection when component unmounts
     return () => {
-      if (sseRef.current) {
-        sseRef.current.close();
-        sseRef.current = null;
-        console.log('SSE connection closed on component unmount');
-      }
-      
-      // Also disconnect from the hook's SSE if connected
+      // Disconnect from the hook's SSE if connected
       if (isConnected) {
         disconnect();
         console.log('SSE hook disconnected on component unmount');
@@ -247,10 +285,7 @@ export function Bots() {
       }
       
       // Update the running bots state
-      setRunningBots(prev => ({
-        ...prev,
-        [botId]: sessionId
-      }));
+      addRunningBot(botId, sessionId);
       
       // Connect to SSE if not already connected
       if (!isConnected) {
@@ -280,32 +315,8 @@ export function Bots() {
           
           console.log('SSE connected, listening for messages...');
           
-          // Create a direct SSE connection as a backup with proper headers
-          // Note: EventSource doesn't support custom headers directly, so we need to use a workaround
-          // We'll add the Authorization header to the URL as a query parameter
-          const sseUrlWithAuth = `${sseUrl}&authorization=Bearer%20${API_CONFIG.CHAMPION_TOKEN}`;
-          const eventSource = new EventSource(sseUrlWithAuth);
-          
-          eventSource.onopen = () => {
-            console.log('SSE connected directly');
-          };
-          
-          eventSource.onmessage = (event) => {
-            try {
-              const message = JSON.parse(event.data);
-              console.log('SSE message received directly:', message);
-              handleSseMessage(message);
-            } catch (error) {
-              console.error('Error parsing SSE message:', error);
-            }
-          };
-          
-          eventSource.onerror = (error) => {
-            console.error('SSE error:', error);
-          };
-          
-          // Store the SSE connection in a ref for later cleanup
-          sseRef.current = eventSource;
+          // We don't need to create a direct EventSource connection as we're already using the hook
+          // This prevents duplicate SSE connections
         } catch (error) {
           console.error('Error connecting to SSE:', error);
         }
@@ -359,28 +370,16 @@ export function Bots() {
       console.log('Bot stopped successfully:', response.data);
       
       // Remove the bot from the running bots state
-      setRunningBots(prev => {
-        const newState = { ...prev };
-        delete newState[botId];
-        
-        // If there are no more running bots, disconnect from SSE
-        if (Object.keys(newState).length === 0) {
-          // Close the direct SSE connection if it exists
-          if (sseRef.current) {
-            sseRef.current.close();
-            sseRef.current = null;
-            console.log('Direct SSE disconnected, no more running bots');
-          }
-          
-          // Also disconnect from the hook's SSE if connected
-          if (isConnected) {
-            disconnect();
-            console.log('SSE hook disconnected, no more running bots');
-          }
+      removeRunningBot(botId);
+      
+      // If there are no more running bots, disconnect from SSE
+      if (Object.keys(runningBots).length === 1) { // Check for 1 since we just removed one but state hasn't updated yet
+        // Disconnect from the hook's SSE if connected
+        if (isConnected) {
+          disconnect();
+          console.log('SSE hook disconnected, no more running bots');
         }
-        
-        return newState;
-      });
+      }
       
       message.success('Bot stopped successfully');
     } catch (error) {
