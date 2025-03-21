@@ -20,7 +20,7 @@ export function SSEProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const connectionRef = useRef<boolean>(false);
 
-  const { authorizeResponse, authParams } = useAuth();
+  const { authorizeResponse } = useAuth();
 useEffect(() => {
   // Only check if we're already connected, but don't require login status
   const canConnect = !connectionRef.current && import.meta.env.VITE_Auth_Url;

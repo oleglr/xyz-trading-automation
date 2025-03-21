@@ -1,5 +1,5 @@
 import { BalanceData, ExternalAPIHeaders } from '../../types/balance';
-import { API_CONFIG, API_ENDPOINTS } from '../../config/api.config';
+import { API_ENDPOINTS } from '../../config/api.config';
 import { apiService } from '../api/apiService';
 
 /**
