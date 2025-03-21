@@ -37,12 +37,12 @@ useEffect(() => {
       url: `${API_CONFIG.BASE_URL}${API_ENDPOINTS.SSE}`,
       headers: {
         'Authorization': `Bearer ${API_CONFIG.CHAMPION_TOKEN}`,
-        'Accept': 'application/json, text/plain, */*',
-        'Content-Type': 'application/json'
+        'Accept': 'text/event-stream',
+        'Cache-Control': 'no-cache'
       },
       queryParams: {
-        account_uuid: API_CONFIG.ACCOUNT_UUID,
-        champion_url: API_CONFIG.CHAMPION_API_URL
+        account_uuid: API_CONFIG.ACCOUNT_UUID
+        // Don't include champion_url parameter
       },
       onMessage: (event) => {
         if (!connectionRef.current) return;

@@ -39,20 +39,27 @@ class CustomEventSource {
       // Add query parameters from the URL search params
       const urlSearchParams = new URLSearchParams(url.search);
       
-      // Add account_uuid and champion_url if they exist in the URL
+      // Only add account_uuid parameter, ignore champion_url
       if (urlSearchParams.has('account_uuid')) {
         url.searchParams.set('account_uuid', urlSearchParams.get('account_uuid')!);
       }
       
-      if (urlSearchParams.has('champion_url')) {
-        url.searchParams.set('champion_url', urlSearchParams.get('champion_url')!);
-      }
+      // Log the final URL for debugging
+      console.log('SSE Service: Connecting to URL:', url.toString());
+      
+      // Ensure we have the required headers for SSE
+      const headers = {
+        ...this.headers,
+        'Accept': this.headers['Accept'] || 'text/event-stream',
+        'Cache-Control': this.headers['Cache-Control'] || 'no-cache'
+      };
+      
+      // Log the headers for debugging
+      console.log('SSE Service: Using headers:', headers);
       
       const response = await fetch(url.toString(), {
         method: 'GET',
-        headers: {
-          ...this.headers
-        },
+        headers,
         mode: 'cors',
         credentials: this.withCredentials ? 'include' : 'omit',
         signal: this.abortController.signal
@@ -219,35 +226,32 @@ class SSEServiceImpl implements SSEService {
       let url = options.url;
       if (options.queryParams) {
         const urlObj = new URL(url);
-        Object.entries(options.queryParams).forEach(([key, value]) => {
-          urlObj.searchParams.set(key, value);
-        });
+        // Only set the account_uuid parameter, ignore champion_url
+        if (options.queryParams.account_uuid) {
+          urlObj.searchParams.set('account_uuid', options.queryParams.account_uuid);
+        }
         url = urlObj.toString();
       } else {
         // Add default query parameters from API_CONFIG
         const urlObj = new URL(url);
         urlObj.searchParams.set('account_uuid', API_CONFIG.ACCOUNT_UUID);
-        urlObj.searchParams.set('champion_url', API_CONFIG.CHAMPION_API_URL);
+        // Don't add champion_url parameter
         url = urlObj.toString();
       }
+      
+      // Log the URL for debugging
+      console.log('SSE Service: Preparing connection to URL:', url);
 
-      // Prepare headers with Bearer token
+      // Include the required headers as per Postman collection
       const headers = {
-        ...options.headers
+        ...options.headers,
+        'Authorization': options.headers['Authorization'] || `Bearer ${API_CONFIG.CHAMPION_TOKEN}`,
+        'Accept': 'text/event-stream', // Always use text/event-stream for SSE
+        'Cache-Control': 'no-cache'
       };
       
-      // Only include the required headers as per Postman collection
-      if (!headers['Authorization']) {
-        headers['Authorization'] = `Bearer ${API_CONFIG.CHAMPION_TOKEN}`;
-      }
-      
-      if (!headers['Accept']) {
-        headers['Accept'] = 'application/json, text/plain, */*';
-      }
-      
-      if (!headers['Content-Type']) {
-        headers['Content-Type'] = 'application/json';
-      }
+      // Log the headers for debugging
+      console.log('SSE Service: Headers for connection:', headers);
 
       this.eventSource = new CustomEventSource(
         url,
