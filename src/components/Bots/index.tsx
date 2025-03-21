@@ -33,7 +33,6 @@ export function Bots() {
 
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const searchInputRef = useRef<HTMLDivElement>(null);
   const sseRef = useRef<EventSource | null>(null);
   
   // State for strategy drawer
