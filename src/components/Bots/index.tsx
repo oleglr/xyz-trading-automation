@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   SearchOutlined,
   PlusOutlined,
@@ -44,8 +44,7 @@ export function Bots() {
   const {
     runningBots,
     addRunningBot,
-    removeRunningBot,
-    getSessionId
+    removeRunningBot
   } = useRunningBots();
   
   // Handle SSE messages

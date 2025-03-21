@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Card, Typography, Tag, Tooltip, Space, Button } from 'antd';
+import { Card, Typography, Tag, Tooltip, Space } from 'antd';
 import {
   ClockCircleOutlined,
   DollarOutlined,
@@ -59,7 +59,7 @@ const formatProfit = (profit: number | undefined) => {
   }).format(profit);
 };
 
-const TradeCard: React.FC<TradeCardProps> = ({ trade, loading, onClose, lastUpdated }) => {
+const TradeCard: React.FC<TradeCardProps> = ({ trade, loading, onClose: _, lastUpdated }) => {
   const [highlight, setHighlight] = useState(false);
   const prevProfitRef = useRef(trade.total_profit);
   const prevContractsRef = useRef(trade.contracts?.map(c => c.profit) || []);
