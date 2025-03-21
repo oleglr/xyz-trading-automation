@@ -352,7 +352,8 @@ export function Bots() {
       // Make direct API call to stop the bot
       // Using the simplified URL format without the champion_url parameter
       const response = await axios.post(
-        `${API_CONFIG.BASE_URL}/champion/v1/stop-trading/${sessionId}`,
+        // `${API_CONFIG.BASE_URL}/champion/v1/stop-trading/${sessionId}`,
+        `https://champion.mobile-bot.deriv.dev/champion/v1/stop-trading/${sessionId}`,
         null,
         {
           params: {
