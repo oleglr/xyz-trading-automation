@@ -71,20 +71,12 @@ export function useWebSocket<T extends WebSocketMessage>(
    * Inputs: payload: Record<string, unknown> - The data to send to the server
    * Output: void - Transmits the message through the WebSocket connection
    */
-  const send = useCallback((payload: Record<string, unknown>) => {
-    // Log the current API configuration
-    console.log('API Config for WebSocket send:', {
-      account_uuid: API_CONFIG.ACCOUNT_UUID,
-      champion_url: API_CONFIG.CHAMPION_API_URL
-    });
-    
+  const send = useCallback((payload: Record<string, unknown>) => {    
     const enhancedPayload = {
       ...payload,
       account_uuid: payload.account_uuid || API_CONFIG.ACCOUNT_UUID,
       champion_url: payload.champion_url || API_CONFIG.CHAMPION_API_URL
     };
-    
-    console.log('Enhanced WebSocket payload:', enhancedPayload);
     wsService.send(enhancedPayload);
   }, []);
 

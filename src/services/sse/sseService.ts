@@ -54,9 +54,6 @@ class CustomEventSource {
         'Cache-Control': this.headers['Cache-Control'] || 'no-cache'
       };
       
-      // Log the headers for debugging
-      console.log('SSE Service: Using headers:', headers);
-      
       const response = await fetch(url.toString(), {
         method: 'GET',
         headers,
@@ -238,9 +235,6 @@ class SSEServiceImpl implements SSEService {
         // Don't add champion_url parameter
         url = urlObj.toString();
       }
-      
-      // Log the URL for debugging
-      console.log('SSE Service: Preparing connection to URL:', url);
 
       // Include the required headers as per Postman collection
       const headers = {
@@ -249,9 +243,6 @@ class SSEServiceImpl implements SSEService {
         'Accept': 'text/event-stream', // Always use text/event-stream for SSE
         'Cache-Control': 'no-cache'
       };
-      
-      // Log the headers for debugging
-      console.log('SSE Service: Headers for connection:', headers);
 
       this.eventSource = new CustomEventSource(
         url,

@@ -37,17 +37,10 @@ class WebSocketService {
     const accountUuid = API_CONFIG.ACCOUNT_UUID;
     const championUrl = API_CONFIG.CHAMPION_API_URL;
     
-    // Log the WebSocket URL parameters for debugging
-    console.log('WebSocket URL parameters:', {
-      account_uuid: accountUuid,
-      champion_url: championUrl
-    });
-    
     url.searchParams.set('account_uuid', accountUuid);
     url.searchParams.set('champion_url', championUrl);
     
     const wsUrl = url.toString();
-    console.log('WebSocket URL:', wsUrl);
     
     return wsUrl;
   }
