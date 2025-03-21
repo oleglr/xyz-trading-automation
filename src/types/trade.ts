@@ -39,23 +39,27 @@ export interface TradeContract {
 }
 
 export interface TradeInfo {
-  contracts: TradeContract[];
+  contracts?: TradeContract[];
   duration: number;
   end_time: string;
   initial: number;
   loss_profit: number;
-  loss_threshold: number;
+  loss_threshold?: number;
   number_of_trade: number;
-  profit_threshold: number;
+  profit_threshold?: number;
   session_id: string;
   start_time: string;
   strategy: string;
   total_profit: number;
   win_profit: number;
+  // Additional fields from API response
+  is_completed?: boolean;
+  status?: string;
 }
 
 export interface TradeStatus {
-  tradeinfo_list: TradeInfo[];
+  tradeinfo_list?: TradeInfo[];
+  sessions?: TradeInfo[];
 }
 
 // Error types
@@ -80,7 +84,7 @@ export enum ContractType {
 
 // Trade strategy types
 export enum TradeStrategy {
-  REPEAT = 'repeat-trade',
-  MARTINGALE = 'martingale-trade',
-  THRESHOLD = 'threshold-trade'
+  REPEAT = 'repeat_trade',
+  MARTINGALE = 'martingale_trade',
+  THRESHOLD = 'threshold_trade'
 }

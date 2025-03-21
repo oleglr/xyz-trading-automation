@@ -11,18 +11,19 @@ interface PositionsState {
   lastUpdated: Record<string, Date>; // Track when each position was last updated
 }
 
-type PositionsAction = 
+type PositionsAction =
   | { type: 'FETCH_START' }
   | { type: 'FETCH_SUCCESS', payload: TradeInfo[] }
   | { type: 'FETCH_ERROR', payload: string }
   | { type: 'UPDATE_POSITION', payload: TradeInfo }
+  | { type: 'UPDATE_POSITION_STATUS', payload: { sessionId: string, status: string } }
   | { type: 'CLOSE_POSITION', payload: string };
 
 // Context interface
 interface PositionsContextType {
   state: PositionsState;
   fetchTrades: () => Promise<void>;
-  closePosition: (sessionId: string) => Promise<void>;
+  closePosition: (sessionId: string) => Promise<string | null>;
   isConnected: boolean;
 }
 
@@ -39,15 +40,19 @@ function positionsReducer(state: PositionsState, action: PositionsAction): Posit
       const now = new Date();
       const lastUpdated: Record<string, Date> = {};
       
-      action.payload.forEach(trade => {
-        tradesMap[trade.session_id] = trade;
-        lastUpdated[trade.session_id] = now;
-      });
+      if (Array.isArray(action.payload)) {
+        action.payload.forEach(trade => {
+          if (trade && trade.session_id) {
+            tradesMap[trade.session_id] = trade;
+            lastUpdated[trade.session_id] = now;
+          }
+        });
+      }
       
-      return { 
-        ...state, 
-        trades: tradesMap, 
-        loading: false, 
+      return {
+        ...state,
+        trades: tradesMap,
+        loading: false,
         error: null,
         lastUpdated
       };
@@ -69,6 +74,32 @@ function positionsReducer(state: PositionsState, action: PositionsAction): Posit
         lastUpdated: {
           ...state.lastUpdated,
           [trade.session_id]: now
+        }
+      };
+    }
+    
+    case 'UPDATE_POSITION_STATUS': {
+      const { sessionId, status } = action.payload;
+      const trade = state.trades[sessionId];
+      
+      if (!trade) {
+        return state;
+      }
+      
+      const now = new Date();
+      
+      return {
+        ...state,
+        trades: {
+          ...state.trades,
+          [sessionId]: {
+            ...trade,
+            status
+          }
+        },
+        lastUpdated: {
+          ...state.lastUpdated,
+          [sessionId]: now
         }
       };
     }
@@ -131,12 +162,23 @@ export function PositionsProvider({ children }: { children: React.ReactNode }) {
     
     try {
       const response = await tradeService.checkTradeStatus();
-      // Always dispatch FETCH_SUCCESS even if tradeinfo_list is empty
-      // This ensures loading state is set to false
+      
       if (response) {
+        // Check for both possible response structures (sessions or tradeinfo_list)
+        let tradesList: TradeInfo[] = [];
+        
+        if (Array.isArray(response.sessions)) {
+          // Handle response with sessions array
+          tradesList = response.sessions;
+        } else if (Array.isArray(response.tradeinfo_list)) {
+          // Handle response with tradeinfo_list array
+          tradesList = response.tradeinfo_list;
+        }
+        
+        // Always dispatch FETCH_SUCCESS with the trades list (even if empty)
         dispatch({
           type: 'FETCH_SUCCESS',
-          payload: Array.isArray(response.tradeinfo_list) ? response.tradeinfo_list : []
+          payload: tradesList
         });
       } else {
         // Handle case where response is null or undefined
@@ -146,11 +188,11 @@ export function PositionsProvider({ children }: { children: React.ReactNode }) {
         });
       }
     } catch (err) {
+      console.error('Error fetching trades:', err);
       dispatch({
         type: 'FETCH_ERROR',
         payload: 'Failed to fetch trading positions. Please try again later.'
       });
-      console.error('Error fetching trades:', err);
     }
   }, []);
   
@@ -160,10 +202,20 @@ export function PositionsProvider({ children }: { children: React.ReactNode }) {
       // Call the API to stop trading for this session
       await tradeService.stopTrading(sessionId);
       
-      // Remove it from the state
-      dispatch({ type: 'CLOSE_POSITION', payload: sessionId });
+      // Update the position status to 'stopped' instead of removing it
+      dispatch({
+        type: 'UPDATE_POSITION_STATUS',
+        payload: {
+          sessionId,
+          status: 'stopped'
+        }
+      });
+      
+      // Return the session ID to indicate success
+      return sessionId;
     } catch (err) {
       console.error('Error closing position:', err);
+      return null;
     }
   }, []);
   
