@@ -55,9 +55,13 @@ export function StrategyForm({
   const handleSubmit = async (values: FormValues) => {
     // for now some values here are static 
     // once we have the api we will make this function dynamic based on the api schema
+    // Get the current form values
+    const currentValues = form.getFieldsValue();
+    
     const botData : Bot = {
       id: isEditMode && editBot ? editBot.id : Date.now().toString(),
-      name: values.botName?.toString() || "New Strategy Bot",
+      // Use the form value for botName, only fallback to "New Strategy Bot" if it's empty
+      name: currentValues.botName ? currentValues.botName.toString() : "New Strategy Bot",
       market: values.market?.toString() || "",
       tradeType: values.tradeType?.toString() || "",
       strategy: isEditMode && editBot ? editBot.strategy : "Custom",
@@ -66,6 +70,10 @@ export function StrategyForm({
         { key: "initial_stake", label: "Initial stake", value: Number(values.initialStake) },
       ],
     };
+    
+    // Log the form values for debugging
+    console.log("Form values:", currentValues);
+    console.log("Bot name being used:", botData.name);
 
     try {
       setIsSubmitting(true);
@@ -130,6 +138,7 @@ export function StrategyForm({
           layout="vertical"
           className="strategy-form"
           initialValues={{
+            botName: "Test-01",
             tradeType: "Rise",
             market: "Volatility 100 (1s) Index",
             initialStake: 10,
@@ -141,7 +150,6 @@ export function StrategyForm({
               label="Bot name"
               type="text"
               className="bot-name-input"
-              defaultValue={'Test-01'}
             />
           </Form.Item>
 
