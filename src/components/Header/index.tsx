@@ -45,10 +45,19 @@ export function Header({
         </>
       ) : (
         <>
-          <div className="app-header__account-info">
-            <div className="app-header__account-type">{accountType}</div>
-            <div className="app-header__account-balance">
-              {balance} {currency}
+          <div className="app-header__user-section">
+            <div className="app-header__logo-section">
+              <img
+                src={DerivLogo}
+                alt="Deriv Logo"
+                className="app-header__logo"
+              />
+            </div>
+            <div className="app-header__account-info">
+              <div className="app-header__account-type">{accountType}</div>
+              <div className="app-header__account-balance">
+                {balance} {currency}
+              </div>
             </div>
           </div>
           <Space>
