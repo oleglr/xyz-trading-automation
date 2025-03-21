@@ -34,10 +34,15 @@ class WebSocketService {
     const url = new URL(`${baseUrl}${wsEndpoint}`);
     
     // Add required query parameters
-    url.searchParams.set('account_uuid', API_CONFIG.ACCOUNT_UUID);
-    url.searchParams.set('champion_url', API_CONFIG.CHAMPION_API_URL);
+    const accountUuid = API_CONFIG.ACCOUNT_UUID;
+    const championUrl = API_CONFIG.CHAMPION_API_URL;
     
-    return url.toString();
+    url.searchParams.set('account_uuid', accountUuid);
+    url.searchParams.set('champion_url', championUrl);
+    
+    const wsUrl = url.toString();
+    
+    return wsUrl;
   }
 
   /**
