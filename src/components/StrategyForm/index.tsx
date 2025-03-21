@@ -70,10 +70,6 @@ export function StrategyForm({
         { key: "initial_stake", label: "Initial stake", value: Number(values.initialStake) },
       ],
     };
-    
-    // Log the form values for debugging
-    console.log("Form values:", currentValues);
-    console.log("Bot name being used:", botData.name);
 
     try {
       setIsSubmitting(true);
