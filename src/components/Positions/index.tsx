@@ -97,27 +97,23 @@ const Positions: React.FC = () => {
             showIcon
             className="positions__error"
           />
+        ) : state.loading ? (
+          <div className="positions__loading">
+            <Spin size="large" />
+          </div>
+        ) : filteredTrades.length === 0 ? (
+          <div className="positions__empty">
+            <SwapOutlined />
+            <Title level={3}>No Active Positions</Title>
+            <p>There are currently no active trading positions to display.</p>
+          </div>
         ) : (
-          <>
-            <TradeGrid
-              trades={filteredTrades}
-              loading={state.loading}
-              onClose={closePosition}
-              lastUpdated={state.lastUpdated}
-            />
-            {state.loading && (
-              <div className="positions__loading">
-                <Spin size="large" />
-              </div>
-            )}
-            {!state.loading && filteredTrades.length === 0 && (
-              <div className="positions__empty">
-                <SwapOutlined />
-                <Title level={3}>No Active Positions</Title>
-                <p>There are currently no active trading positions to display.</p>
-              </div>
-            )}
-          </>
+          <TradeGrid
+            trades={filteredTrades}
+            loading={false}
+            onClose={closePosition}
+            lastUpdated={state.lastUpdated}
+          />
         )}
       </div>
     </div>

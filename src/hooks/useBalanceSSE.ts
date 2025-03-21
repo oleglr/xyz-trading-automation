@@ -19,8 +19,7 @@ export function useBalanceSSE() {
   const { balanceData, updateBalance, refreshBalance } = useBalance();
   const [isConnected, setIsConnected] = useState(false);
   
-  // Always consider as logged in for SSE connection purposes
-  const isLoggedIn = true;
+  // Always connected for SSE connection purposes
   
   // Fetch initial balance only once
   useEffect(() => {

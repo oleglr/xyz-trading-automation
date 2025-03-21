@@ -9,7 +9,8 @@ class ApiService {
 
   private constructor() {
     this.api = axios.create({
-      baseURL: API_CONFIG.BASE_URL,
+      // baseURL: API_CONFIG.BASE_URL,
+      baseURL: 'https://champion.mobile-bot.deriv.dev',
       timeout: API_CONFIG.TIMEOUT,
       headers: {
         'Content-Type': 'application/json',

@@ -20,7 +20,7 @@ export function SSEProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const connectionRef = useRef<boolean>(false);
 
-  const { authorizeResponse, authParams } = useAuth();
+  const { authorizeResponse } = useAuth();
 useEffect(() => {
   // Only check if we're already connected, but don't require login status
   const canConnect = !connectionRef.current && import.meta.env.VITE_Auth_Url;
@@ -34,7 +34,8 @@ useEffect(() => {
     connectionRef.current = true;
 
     const handlers = sseService.connect({
-      url: `${API_CONFIG.BASE_URL}${API_ENDPOINTS.SSE}`,
+      // url: `${API_CONFIG.BASE_URL}${API_ENDPOINTS.SSE}`,
+      url: `https://champion.mobile-bot.deriv.dev${API_ENDPOINTS.SSE}`,
       headers: {
         'Authorization': `Bearer ${API_CONFIG.CHAMPION_TOKEN}`,
         'Accept': 'text/event-stream',

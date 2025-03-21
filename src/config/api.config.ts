@@ -1,13 +1,12 @@
 export const API_CONFIG = {
   BASE_URL: import.meta.env.VITE_API_URL,
   WS_URL: import.meta.env.VITE_WS_URL,
-  EXTERNAL_API_BASE_URL: import.meta.env.VITE_API_URL,
   TIMEOUT: 30000, // 30 seconds
   RETRY_ATTEMPTS: 3,
   // Champion API specific configuration
-  CHAMPION_TOKEN: import.meta.env.VITE_CHAMPION_TOKEN,
-  ACCOUNT_UUID: import.meta.env.VITE_ACCOUNT_UUID,
-  CHAMPION_API_URL: import.meta.env.VITE_CHAMPION_API_URL,
+  CHAMPION_TOKEN: import.meta.env.VITE_CHAMPION_TOKEN || 'champion_trading_automation',
+  ACCOUNT_UUID: import.meta.env.VITE_ACCOUNT_UUID || 'account_uuid',
+  CHAMPION_API_URL: import.meta.env.VITE_CHAMPION_API_URL || 'http://mobile-backend-service-mock-gray:3000',
 }
 
 export const API_ENDPOINTS = {

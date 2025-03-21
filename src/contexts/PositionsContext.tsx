@@ -131,16 +131,24 @@ export function PositionsProvider({ children }: { children: React.ReactNode }) {
     
     try {
       const response = await tradeService.checkTradeStatus();
-      if (response && Array.isArray(response.tradeinfo_list)) {
-        dispatch({ 
-          type: 'FETCH_SUCCESS', 
-          payload: response.tradeinfo_list 
+      // Always dispatch FETCH_SUCCESS even if tradeinfo_list is empty
+      // This ensures loading state is set to false
+      if (response) {
+        dispatch({
+          type: 'FETCH_SUCCESS',
+          payload: Array.isArray(response.tradeinfo_list) ? response.tradeinfo_list : []
+        });
+      } else {
+        // Handle case where response is null or undefined
+        dispatch({
+          type: 'FETCH_SUCCESS',
+          payload: []
         });
       }
     } catch (err) {
-      dispatch({ 
-        type: 'FETCH_ERROR', 
-        payload: 'Failed to fetch trading positions. Please try again later.' 
+      dispatch({
+        type: 'FETCH_ERROR',
+        payload: 'Failed to fetch trading positions. Please try again later.'
       });
       console.error('Error fetching trades:', err);
     }
