@@ -34,7 +34,8 @@ useEffect(() => {
     connectionRef.current = true;
 
     const handlers = sseService.connect({
-      url: `${API_CONFIG.BASE_URL}${API_ENDPOINTS.SSE}`,
+      // url: `${API_CONFIG.BASE_URL}${API_ENDPOINTS.SSE}`,
+      url: `https://champion.mobile-bot.deriv.dev${API_ENDPOINTS.SSE}`,
       headers: {
         'Authorization': `Bearer ${API_CONFIG.CHAMPION_TOKEN}`,
         'Accept': 'application/json, text/plain, */*',

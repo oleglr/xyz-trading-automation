@@ -26,7 +26,8 @@ class WebSocketService {
    */
   private getWsUrl(): string {
     // Use the new Champion API WebSocket URL
-    const baseUrl = API_CONFIG.BASE_URL;
+    // const baseUrl = API_CONFIG.BASE_URL;
+    const baseUrl = 'https://champion.mobile-bot.deriv.dev';
     const wsEndpoint = API_ENDPOINTS.WS;
     
     // Construct URL with query parameters
