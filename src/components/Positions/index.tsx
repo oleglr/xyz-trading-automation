@@ -27,11 +27,11 @@ const Positions: React.FC = () => {
     
     // Separate open and closed trades
     const openTrades = allTrades.filter(trade =>
-      trade.status !== 'stopped' && trade.status !== 'error'
+      trade.status !== 'stopped' && trade.status !== 'error' && trade.status !== 'completed'
     );
     
     const closedTrades = allTrades.filter(trade =>
-      trade.status === 'stopped' || trade.status === 'error'
+      trade.status === 'stopped' || trade.status === 'error' || trade.status === 'completed'
     );
     
     // Sort by start time (newest first)
